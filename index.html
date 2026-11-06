@@ -53,7 +53,8 @@ h2{font-size:clamp(30px,4.5vw,46px)}
 .btn.danger{background:var(--bad);border-color:var(--bad);color:#fff}
 .btn.block{width:100%}
 .icon-btn{position:relative;display:inline-flex;align-items:center;gap:8px;height:42px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-weight:600;font-size:14px}
-.icon-btn svg{width:18px;height:18px}
+.icon-btn svg{width:18px;height:18px;flex:none}
+@media (max-width:560px){.top .wrap{gap:10px}.actions{gap:6px}.icon-btn{height:40px;padding:0 10px;gap:6px}.logo{min-width:0;overflow:hidden}}
 .badge{min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:var(--cobalt);color:var(--on-gold);font-size:12px;display:inline-flex;align-items:center;justify-content:center;font-variant-numeric:tabular-nums}
 .admin-btn{background:var(--gold-grad);color:var(--on-gold);border-color:transparent}
 
@@ -651,7 +652,8 @@ function filtered(){
   const q=S.q.trim().toLowerCase();
   let list=S.products.filter(visible).filter(p=>S.cat==='all'||p.cat===S.cat)
     .filter(p=>!q||[p.name,p.brand,p.material,p.desc,p.sku,catName(p.cat)].join(' ').toLowerCase().includes(q));
-  const by={pop:(a,b)=>(num(b.sold)-num(a.sold))||(num(b.created)-num(a.created)),cheap:(a,b)=>num(a.price)-num(b.price),exp:(a,b)=>num(b.price)-num(a.price),new:(a,b)=>num(b.created)-num(a.created)};
+  const hp=p=>p.hasPhoto||p.photo||p.photoUrl?1:0;
+  const by={pop:(a,b)=>(hp(b)-hp(a))||(num(b.sold)-num(a.sold))||(num(b.created)-num(a.created)),cheap:(a,b)=>num(a.price)-num(b.price),exp:(a,b)=>num(b.price)-num(a.price),new:(a,b)=>num(b.created)-num(a.created)};
   return list.sort(by[S.sort]);
 }
 function renderGrid(){
@@ -687,7 +689,7 @@ function renderInfo(){
   $('#shipList').innerHTML=SHIP.map(s=>`<li><span>${s.name}<br><small class="muted">${s.note}</small></span><b class="price">${s.cost==null?'Уточним по телефону':s.cost?money(s.cost):'Бесплатно'}${s.freeFrom?`<br><small class="muted" style="font-weight:400">бесплатно от ${money(s.freeFrom)}</small>`:''}</b></li>`).join('');
   $('#payList').innerHTML=PAY.map(p=>`<div class="pay"><i>${p.ic}</i><div><b>${p.name}</b><small>${p.note}</small></div></div>`).join('');
 }
-function renderAll(){renderHeader();renderCats();renderGrid();setTimeout(hydratePhotos);if($('#cart').classList.contains('on'))renderCart();if($('#admin').classList.contains('on'))renderAdmin()}
+function renderAll(){renderHeader();renderCats();renderGrid();setTimeout(hydratePhotos);if(S.photoMode&&document.activeElement&&document.activeElement.id==='pmUrl')return;if($('#cart').classList.contains('on'))renderCart();if($('#admin').classList.contains('on'))renderAdmin()}
 
 /* ===================== оверлеи ===================== */
 let lastFocus=null;
@@ -915,12 +917,14 @@ function renderAdmin(){
   document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected',t.dataset.tab===S.adminTab));
   const b=$('#adminBody'),orders=(S.allOrders||[]).slice().sort((a,b)=>b.at-a.at);
   if(S.editing){b.innerHTML=editorHtml(S.editing);bindEditor();return}
+  if(S.photoMode&&S.adminTab==='products'){renderPhotoMode();return}
   if(S.adminTab==='products'){
     const act=S.products.filter(p=>p.active!==false).length,nophoto=S.products.filter(p=>!p.hasPhoto&&!p.photo&&!p.photoUrl).length;
     b.innerHTML=`<div class="kpis"><div class="kpi"><b>${S.products.length}</b><span>товаров всего</span></div><div class="kpi"><b>${act}</b><span>показываются в магазине</span></div><div class="kpi"><b>${S.products.filter(p=>p.stock!=null&&num(p.stock)<=3).length}</b><span>заканчиваются (≤ 3 шт.)</span></div><div class="kpi"><b>${nophoto}</b><span>без фото</span></div></div>
       <div class="row" style="margin-bottom:14px;align-items:center;flex-wrap:wrap;gap:10px"><h3 style="font-size:24px">Товары</h3><div style="display:flex;gap:8px;flex-wrap:wrap">
         ${S.products.length?'':'<button class="btn ghost" id="seedProds">Загрузить 14 примеров</button>'}
         <label class="btn ghost" for="kaspiFile" style="cursor:pointer">Импорт из Kaspi (Excel)</label><input type="file" id="kaspiFile" accept=".xlsx" hidden>
+        ${S.products.length?'<button class="btn ghost" id="photoMode">Режим фото</button><label class="btn ghost" for="bulkPhotos" style="cursor:pointer">Фото пачкой</label><input type="file" id="bulkPhotos" accept="image/*" multiple hidden>':''}
         <button class="btn" id="newProd">+ Добавить товар</button></div></div>
       <div class="toolbar"><label class="search" for="adminQ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="adminQ" type="search" placeholder="Название, бренд или SKU" value="${esc(S.aq)}" autocomplete="off"></label>
         <select class="sel" id="adminCat" aria-label="Категория"><option value="all">Все категории</option><option value="nophoto" ${S.acat==='nophoto'?'selected':''}>Без фото</option><option value="hidden" ${S.acat==='hidden'?'selected':''}>Скрытые</option>${CATS.map(c=>`<option value="${c.id}" ${S.acat===c.id?'selected':''}>${c.name}</option>`).join('')}</select></div>
@@ -1016,6 +1020,52 @@ function bindEditor(){
 function confirmDelete(id){const p=prod(id);openModal('Удалить товар?',`<p>«${esc(p.name)}» исчезнет из каталога. Это нельзя отменить.</p><div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap"><button class="btn danger" id="doDel" data-id="${id}">Удалить</button><button class="btn ghost" data-close-btn>Отмена</button></div>`,true)}
 
 
+
+/* ===================== режим фото ===================== */
+const hasPic=p=>!!(p.hasPhoto||p.photo||p.photoUrl);
+function photoQueue(){return S.products.filter(p=>!hasPic(p)&&p.active!==false&&!(S.pmSkipped||new Set()).has(p.id)).sort((a,b)=>num(b.price)-num(a.price))}
+function resizeImage(file,max=800){return new Promise((ok,bad)=>{const img=new Image(),url=URL.createObjectURL(file);
+  img.onload=()=>{const k=Math.min(1,max/Math.max(img.width,img.height)),c=document.createElement('canvas');c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);
+    c.getContext('2d').drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(url);ok(c.toDataURL('image/jpeg',.8))};
+  img.onerror=()=>{URL.revokeObjectURL(url);bad(new Error('Не получилось открыть файл'))};img.src=url})}
+async function savePhoto(id,data){await B.setPhoto(id,data);photoCache.set(id,data);await B.updateProduct(id,{hasPhoto:true})}
+function renderPhotoMode(){
+  const b=$('#adminBody'),q=photoQueue(),total=S.products.filter(p=>p.active!==false).length,done=S.products.filter(p=>p.active!==false&&hasPic(p)).length;
+  const p=q[0];
+  b.innerHTML=`<div class="row" style="margin-bottom:14px;align-items:center;flex-wrap:wrap;gap:10px"><h3 style="font-size:24px">Режим фото</h3><button class="btn small ghost" id="pmExit">← К списку товаров</button></div>
+    <div class="kpis"><div class="kpi"><b>${done} из ${total}</b><span>товаров с фото</span></div><div class="kpi"><b>${q.length}</b><span>осталось в очереди</span></div></div>
+    ${!p?`<div class="empty">Все товары в очереди с фото. ${S.pmSkipped?.size?`Пропущено: ${S.pmSkipped.size}. <button class="link" id="pmReset">Вернуть пропущенные</button>`:''}</div>`:`
+    <div class="editor" style="align-items:start">
+      <div style="display:grid;gap:12px">
+        <div class="preview-card" style="aspect-ratio:1">${pic(p)}</div>
+      </div>
+      <div style="display:grid;gap:12px">
+        <div><span class="eyebrow">${esc(catName(p.cat))}</span><h3 style="font-size:24px;margin:6px 0">${esc(p.name)}</h3>
+          <div class="muted" style="font-size:14px">${esc([p.brand,p.sku?'SKU '+p.sku:''].filter(Boolean).join(' · '))} · <b class="price" style="color:var(--ink)">${money(p.price)}</b></div></div>
+        <label class="btn block" for="pmCam" style="cursor:pointer">📷 Сфотографировать</label><input type="file" id="pmCam" accept="image/*" capture="environment" hidden>
+        <label class="btn ghost block" for="pmFile" style="cursor:pointer">Выбрать фото из галереи</label><input type="file" id="pmFile" accept="image/*" hidden>
+        <div class="fgrid" style="grid-template-columns:1fr auto;align-items:end"><label class="f" for="pmUrl">Или ссылка на фото<input id="pmUrl" placeholder="https://…" autocomplete="off"></label><button class="btn ghost" id="pmUrlSave" style="height:44px">Сохранить</button></div>
+        <a class="link" style="font-size:14px" href="https://kaspi.kz/shop/search/?text=${encodeURIComponent(p.name)}" target="_blank" rel="noopener">Найти этот товар на Kaspi ↗</a>
+        <span class="hint">На странице товара нажмите на фото правой кнопкой (на телефоне долгим нажатием) → «Копировать адрес изображения» и вставьте сюда.</span>
+        <label class="f" for="pmCat">Категория<select id="pmCat">${CATS.map(c=>`<option value="${c.id}" ${p.cat===c.id?'selected':''}>${c.name}</option>`).join('')}</select></label>
+        <div class="err" id="pm-err"></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn ghost" id="pmSkip" data-id="${p.id}">Пропустить →</button><button class="btn ghost" id="pmHide" data-id="${p.id}" style="color:var(--muted);border-color:var(--line)">Скрыть товар</button></div>
+      </div></div>
+    <p class="hint" style="margin-top:14px">Сначала идут самые дорогие товары. На телефоне кнопка «Сфотографировать» сразу открывает камеру: удобно снимать товары прямо в бутике.</p>`}`;
+  hydratePhotos();
+}
+async function pmPhoto(file){const p=photoQueue()[0];if(!p||!file)return;$('#pm-err').textContent='Сохраняем фото…';
+  try{await savePhoto(p.id,await resizeImage(file));toast('Фото сохранено');renderPhotoMode()}catch(e){$('#pm-err').textContent=e?.message||'Не удалось сохранить фото'}}
+async function bulkPhotos(files){
+  const bySku=new Map();S.products.forEach(p=>{if(p.sku)bySku.set(String(p.sku).toLowerCase(),p)});
+  let ok=0,miss=[];toast(`Загружаем ${files.length} фото…`);
+  for(const f of files){const base=f.name.replace(/\.[^.]+$/,'').trim().toLowerCase().replace(/[\s(].*$/,'');
+    const p=bySku.get(base)||S.products.find(x=>x.id==='k'+base);
+    if(!p){miss.push(f.name);continue}
+    try{await savePhoto(p.id,await resizeImage(f));ok++}catch(e){miss.push(f.name)}}
+  openModal('Фото пачкой',`<p>Загружено фото: <b>${ok}</b>.</p>${miss.length?`<p class="muted" style="margin-top:10px">Не нашли товар для ${miss.length} ${plural(miss.length,'файла','файлов','файлов')}: ${esc(miss.slice(0,15).join(', '))}${miss.length>15?'…':''}</p>`:''}
+    <div class="note" style="margin-top:14px">Чтобы фото подставилось само, назовите файл артикулом (SKU) товара, например <b>704418473.jpg</b>. Артикул виден в админке под названием товара.</div>`,true)}
+
 /* ===================== импорт прайс-листа Kaspi (Excel) ===================== */
 // Читает .xlsx прямо в браузере (без библиотек). Файл никуда не отправляется, кроме вашей базы Firebase.
 async function readXlsx(file){
@@ -1060,7 +1110,8 @@ const CAT_RULES=[
 const classify=name=>{const t=' '+String(name).toLowerCase()+' ';for(const [c,re] of CAT_RULES)if(re.test(t))return c;return 'other'};
 const MATERIALS=[['костяной фарфор','Костяной фарфор'],['фарфор','Фарфор'],['керамик','Керамика'],['хрустал','Хрусталь'],['жаропрочное стекло','Жаропрочное стекло'],['стекло','Стекло'],['нержавеющая сталь','Нержавеющая сталь'],['нерж','Нержавеющая сталь'],['мельхиор','Мельхиор'],['чугун','Чугун'],['мраморн','Мраморное покрытие'],['гранит','Гранитное покрытие'],['алюмини','Алюминий'],['бамбук','Бамбук'],['дерев','Дерево'],['силикон','Силикон'],['пластик','Пластик'],['сталь','Сталь'],['металл','Металл']];
 const materialOf=n=>{const t=n.toLowerCase(),out=[];for(const [k,v] of MATERIALS)if(t.includes(k)&&!out.includes(v)&&!(v==='Сталь'&&out.includes('Нержавеющая сталь'))&&!(v==='Фарфор'&&out.includes('Костяной фарфор'))&&!(v==='Стекло'&&(out.includes('Жаропрочное стекло')))){out.push(v);if(out.length===2)break}return out.join(', ')};
-const brandName=b=>{b=String(b||'').trim();if(!b||/без бренда/i.test(b))return '';b=b.split('-')[0];return b.charAt(0).toUpperCase()+b.slice(1)};
+const cap=w=>w.charAt(0).toUpperCase()+w.slice(1);
+const brandName=b=>{b=String(b||'').trim();if(!b||/без бренда/i.test(b))return '';const parts=b.split('-');if(parts[0].length<=2&&parts[1])return parts[0].toUpperCase()+'-'+cap(parts[1]);return cap(parts[0])};
 function looksOf(cat,n){const t=n.toLowerCase(),gold=/золот/.test(t),shape=(CATS.find(c=>c.id===cat)||{}).shape||'plate';
   let color='#FFFFFF',pattern='rim';
   if(cat==='cutlery')color=gold?'#C9A45C':'#D8DCE2',pattern='none';
@@ -1093,7 +1144,7 @@ async function startImport(file){
   if(!items.length){toast('В файле не нашлось товаров');return}
   const have=new Map(S.products.map(p=>[p.id,p]));
   const fresh=items.filter(i=>!have.has(i.id)),upd=[];
-  items.forEach(i=>{const p=have.get(i.id);if(!p)return;const ch={};if(num(p.price)!==i.price)ch.price=i.price;if(num(p.stock)!==i.stock)ch.stock=i.stock;if(Object.keys(ch).length)upd.push([i.id,ch])});
+  items.forEach(i=>{const p=have.get(i.id);if(!p)return;const ch={};if(num(p.price)!==i.price)ch.price=i.price;if(i.brand&&p.brand!==i.brand)ch.brand=i.brand;if(num(p.stock)!==i.stock)ch.stock=i.stock;if(Object.keys(ch).length)upd.push([i.id,ch])});
   const fileIds=new Set(items.map(i=>i.id)),gone=S.products.filter(p=>p.source==='kaspi'&&!fileIds.has(p.id)).length;
   const byCat={};fresh.forEach(i=>byCat[i.cat]=(byCat[i.cat]||0)+1);
   const unnamed=fresh.filter(i=>!i.active).length;
@@ -1138,6 +1189,13 @@ document.addEventListener('click',async e=>{
   else if(t.id==='resend'){try{await B.resendVerify();toast('Письмо отправлено')}catch(err){toast(authErr(err))}}
   else if(t.id==='recheck'){await B.reloadUser();openAccount();toast(S.owner?'Готово: админ-панель включена':'Почта ещё не подтверждена')}
   else if(d.tab){S.adminTab=d.tab;S.editing=null;renderAdmin()}
+  else if(t.id==='photoMode'){S.photoMode=true;renderAdmin()}
+  else if(t.id==='pmExit'){S.photoMode=false;renderAdmin()}
+  else if(t.id==='pmReset'){S.pmSkipped=new Set();renderPhotoMode()}
+  else if(t.id==='pmSkip'){(S.pmSkipped=S.pmSkipped||new Set()).add(t.dataset.id);renderPhotoMode()}
+  else if(t.id==='pmHide'){try{await B.updateProduct(t.dataset.id,{active:false});toast('Товар скрыт')}catch(err){toast('Не удалось скрыть')}renderPhotoMode()}
+  else if(t.id==='pmUrlSave'){const u=$('#pmUrl').value.trim(),p=photoQueue()[0];if(!/^https?:\/\//.test(u)){$('#pm-err').textContent='Вставьте ссылку, которая начинается с https://';return}
+    try{await B.updateProduct(p.id,{photoUrl:u});toast('Фото сохранено');renderPhotoMode()}catch(err){$('#pm-err').textContent='Не удалось сохранить'}}
   else if(t.id==='newProd'){S.editing={cat:S.cat!=='all'?S.cat:'plates',shape:'plate',color:'#FFFFFF',pattern:'gzhel',active:true};renderAdmin()}
   else if(d.apage!==undefined){S.apage=+d.apage;renderAdminTable();$('#admTable').scrollIntoView({block:'start'})}
   else if(t.id==='doImport'){runImport(t)}
@@ -1151,6 +1209,9 @@ document.addEventListener('change',async e=>{
   const t=e.target;
   if(t.id==='adminCat'){S.acat=t.value;S.apage=0;renderAdminTable()}
   if(t.id==='kaspiFile'&&t.files[0]){startImport(t.files[0]);t.value=''}
+  if((t.id==='pmCam'||t.id==='pmFile')&&t.files[0]){pmPhoto(t.files[0]);t.value=''}
+  if(t.id==='bulkPhotos'&&t.files.length){bulkPhotos([...t.files]);t.value=''}
+  if(t.id==='pmCat'){const p=photoQueue()[0];if(p){try{await B.updateProduct(p.id,{cat:t.value});toast('Категория: '+catName(t.value))}catch(err){toast('Не удалось изменить')}}}
   if(t.name==='ship'){if(t.value==='kz')S.kzManual=true;if(t.value==='courier')S.kzManual=false;updateCoSum()}
   if(t.id==='co-city'){S.kzManual=false;updateCoSum()}
   if(t.dataset.toggle){try{await B.updateProduct(t.dataset.toggle,{active:t.checked});toast(t.checked?'Товар показан в магазине':'Товар скрыт от покупателей')}catch(err){t.checked=!t.checked;toast('Не удалось изменить')}}
