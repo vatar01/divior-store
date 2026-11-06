@@ -193,6 +193,10 @@ footer .copy{grid-column:1/-1;border-top:1px solid rgba(255,255,255,.15);padding
 .box-head h3{font-size:24px}
 .box-body{padding:22px}
 .pd{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.gal{display:flex;gap:8px;margin-top:10px;overflow-x:auto}
+.gal-t{flex:none;width:64px;height:64px;border-radius:10px;border:2px solid transparent;background:#fff;padding:0;cursor:pointer;overflow:hidden}
+.gal-t.on{border-color:var(--cobalt)}
+.gal-t img{width:100%;height:100%;object-fit:contain}
 .pd .media{aspect-ratio:1;background:var(--media);border-radius:14px;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .pd .media img{width:100%;height:100%;object-fit:contain;background:#fff}
 .pd .media svg{width:82%;height:82%}
@@ -588,7 +592,10 @@ const photoCache=new Map();
 const PIX='data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
 const pic=p=>p.photo?`<img src="${esc(p.photo)}" alt="${esc(p.name)}">`
   :p.photoUrl?`<img src="${esc(p.photoUrl)}" alt="${esc(p.name)}" loading="lazy" referrerpolicy="no-referrer">`
-  :p.hasPhoto?`<img class="lp" data-pid="${esc(p.id)}" alt="${esc(p.name)}" src="${photoCache.get(p.id)||PIX}">`:art(p);
+  :p.hasPhoto?`<img class="lp" data-pid="${esc(p.id)}" alt="${esc(p.name)}" src="${photoCache.get(p.id)||PIX}">`
+  :p.kimg&&p.kimg.length?`<img src="${kimgUrl(p.kimg[0])}" alt="${esc(p.name)}" loading="lazy" referrerpolicy="no-referrer">`:art(p);
+const KCDN='https://resources.cdn-kaspi.kz/img/m/p/';
+function kimgUrl(loc,size='gallery-medium'){return KCDN+loc+'?format='+size}
 let photoObs=null;
 function hydratePhotos(){
   const imgs=document.querySelectorAll('img.lp:not([data-h])');if(!imgs.length||!window.B)return;
@@ -652,7 +659,7 @@ function filtered(){
   const q=S.q.trim().toLowerCase();
   let list=S.products.filter(visible).filter(p=>S.cat==='all'||p.cat===S.cat)
     .filter(p=>!q||[p.name,p.brand,p.material,p.desc,p.sku,catName(p.cat)].join(' ').toLowerCase().includes(q));
-  const hp=p=>p.hasPhoto||p.photo||p.photoUrl?1:0;
+  const hp=p=>p.hasPhoto||p.photo||p.photoUrl||(p.kimg&&p.kimg.length)?1:0;
   const by={pop:(a,b)=>(hp(b)-hp(a))||(num(b.sold)-num(a.sold))||(num(b.created)-num(a.created)),cheap:(a,b)=>num(a.price)-num(b.price),exp:(a,b)=>num(b.price)-num(a.price),new:(a,b)=>num(b.created)-num(a.created)};
   return list.sort(by[S.sort]);
 }
@@ -705,7 +712,8 @@ $('#modal').addEventListener('click',e=>{if(e.target.id==='modal')closeAll()});
 
 /* товар */
 function openProduct(id){const p=prod(id);if(!p)return;const q=S.cart[id]||0;const out=p.stock!=null&&num(p.stock)<=0;const sale=num(p.oldPrice)>num(p.price);
-  openModal(p.name,`<div class="pd"><div class="media">${pic(p)}</div><div>
+  const gal=(p.kimg||[]).length>1&&!p.photo&&!p.photoUrl&&!p.hasPhoto?p.kimg:null;
+  openModal(p.name,`<div class="pd"><div><div class="media" id="pdMain">${pic(p)}</div>${gal?`<div class="gal">${gal.map((l,i)=>`<button class="gal-t${i?'':' on'}" data-gal="${esc(l)}" aria-label="Фото ${i+1}"><img src="${kimgUrl(l,'gallery-small')}" alt="" referrerpolicy="no-referrer"></button>`).join('')}</div>`:''}</div><div>
     <span class="eyebrow">${esc(catName(p.cat))}</span>
     <div style="font-size:28px;font-weight:700;margin:8px 0" class="price">${money(p.price)} ${sale?`<span class="old" style="font-size:16px;color:var(--muted);text-decoration:line-through;font-weight:500">${money(p.oldPrice)}</span>`:''}</div>
     <p>${esc(p.desc||'Описание скоро появится.')}</p>
@@ -713,6 +721,7 @@ function openProduct(id){const p=prod(id);if(!p)return;const q=S.cart[id]||0;con
       <dt>Цвет</dt><dd>${esc(COLORS[p.color]||'—')}${p.pattern&&p.pattern!=='none'?', '+esc(PATTERNS[p.pattern]||''):''}</dd>
       <dt>Наличие</dt><dd>${out?'Нет в наличии':p.stock!=null?`${num(p.stock)} шт.`:'В наличии'}</dd></dl>
     <button class="btn block" data-add="${p.id}" ${out?'disabled':''}>${q?`В корзине: ${q} · добавить ещё`:'Добавить в корзину'}</button>
+    ${p.kaspiId?`<a class="btn ghost block" style="margin-top:10px" href="https://kaspi.kz/shop/p/-${esc(p.kaspiId)}/" target="_blank" rel="noopener">Отзывы и покупка на Kaspi ↗</a>`:''}
   </div></div>`)}
 
 /* корзина */
@@ -919,12 +928,12 @@ function renderAdmin(){
   if(S.editing){b.innerHTML=editorHtml(S.editing);bindEditor();return}
   if(S.photoMode&&S.adminTab==='products'){renderPhotoMode();return}
   if(S.adminTab==='products'){
-    const act=S.products.filter(p=>p.active!==false).length,nophoto=S.products.filter(p=>!p.hasPhoto&&!p.photo&&!p.photoUrl).length;
+    const act=S.products.filter(p=>p.active!==false).length,nophoto=S.products.filter(p=>!hasPic(p)).length;
     b.innerHTML=`<div class="kpis"><div class="kpi"><b>${S.products.length}</b><span>товаров всего</span></div><div class="kpi"><b>${act}</b><span>показываются в магазине</span></div><div class="kpi"><b>${S.products.filter(p=>p.stock!=null&&num(p.stock)<=3).length}</b><span>заканчиваются (≤ 3 шт.)</span></div><div class="kpi"><b>${nophoto}</b><span>без фото</span></div></div>
       <div class="row" style="margin-bottom:14px;align-items:center;flex-wrap:wrap;gap:10px"><h3 style="font-size:24px">Товары</h3><div style="display:flex;gap:8px;flex-wrap:wrap">
         ${S.products.length?'':'<button class="btn ghost" id="seedProds">Загрузить 14 примеров</button>'}
         <label class="btn ghost" for="kaspiFile" style="cursor:pointer">Импорт из Kaspi (Excel)</label><input type="file" id="kaspiFile" accept=".xlsx" hidden>
-        ${S.products.length?'<button class="btn ghost" id="photoMode">Режим фото</button><label class="btn ghost" for="bulkPhotos" style="cursor:pointer">Фото пачкой</label><input type="file" id="bulkPhotos" accept="image/*" multiple hidden>':''}
+        ${S.products.length?'<button class="btn ghost" id="kaspiPhotos">Фото с Kaspi</button><button class="btn ghost" id="photoMode">Режим фото</button><label class="btn ghost" for="bulkPhotos" style="cursor:pointer">Фото пачкой</label><input type="file" id="bulkPhotos" accept="image/*" multiple hidden>':''}
         <button class="btn" id="newProd">+ Добавить товар</button></div></div>
       <div class="toolbar"><label class="search" for="adminQ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="adminQ" type="search" placeholder="Название, бренд или SKU" value="${esc(S.aq)}" autocomplete="off"></label>
         <select class="sel" id="adminCat" aria-label="Категория"><option value="all">Все категории</option><option value="nophoto" ${S.acat==='nophoto'?'selected':''}>Без фото</option><option value="hidden" ${S.acat==='hidden'?'selected':''}>Скрытые</option>${CATS.map(c=>`<option value="${c.id}" ${S.acat===c.id?'selected':''}>${c.name}</option>`).join('')}</select></div>
@@ -951,7 +960,7 @@ function renderAdmin(){
 }
 function renderAdminTable(){
   const box=$('#admTable');if(!box)return;const q=S.aq.trim().toLowerCase(),PER=50;
-  let list=S.products.filter(p=>S.acat==='all'||(S.acat==='nophoto'?!p.hasPhoto&&!p.photo&&!p.photoUrl:S.acat==='hidden'?p.active===false:p.cat===S.acat))
+  let list=S.products.filter(p=>S.acat==='all'||(S.acat==='nophoto'?!hasPic(p):S.acat==='hidden'?p.active===false:p.cat===S.acat))
     .filter(p=>!q||[p.name,p.brand,p.sku].join(' ').toLowerCase().includes(q)).sort((a,b)=>num(b.created)-num(a.created));
   const pages=Math.max(1,Math.ceil(list.length/PER));S.apage=Math.min(S.apage,pages-1);
   if(!S.products.length){box.innerHTML=`<div class="empty">Товаров пока нет. Загрузите прайс-лист из Kaspi кнопкой «Импорт из Kaspi (Excel)» или добавьте товар вручную.</div>`;return}
@@ -1000,7 +1009,7 @@ function bindEditor(){
   const prev=()=>{$('#edPrev').innerHTML=pic(readEditor())};prev();
   $('#edForm').addEventListener('input',prev);$('#ed-purl').addEventListener('input',prev);
   const back=()=>{S.editing=null;renderAdmin()};$('#edCancel').onclick=back;$('#edCancel2').onclick=back;
-  $('#edNoPhoto').onclick=()=>{S.editing={...readEditor(),photo:null,photoUrl:'',hasPhoto:false,_removePhoto:true};renderAdmin()};
+  $('#edNoPhoto').onclick=()=>{S.editing={...readEditor(),photo:null,photoUrl:'',hasPhoto:false,kimg:[],_removePhoto:true};renderAdmin()};
   $('#ed-photo').onchange=e=>{const file=e.target.files[0];if(!file)return;const img=new Image(),url=URL.createObjectURL(file);
     img.onload=()=>{const m=640,k=Math.min(1,m/Math.max(img.width,img.height)),c=document.createElement('canvas');c.width=img.width*k;c.height=img.height*k;
       c.getContext('2d').drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(url);S.editing={...readEditor(),photo:c.toDataURL('image/jpeg',.78),_removePhoto:false};renderAdmin()};
@@ -1021,8 +1030,29 @@ function confirmDelete(id){const p=prod(id);openModal('Удалить товар
 
 
 
+
+/* ===================== фото из кабинета Kaspi (вставка из буфера) ===================== */
+function openKaspiPhotos(){openModal('Фото с Kaspi',`<div class="form">
+  <p class="muted">Вставьте сюда данные, которые Claude скопировал из кабинета Kaspi (Ctrl+V). Сайт подставит фото к товарам с таким же артикулом.</p>
+  <label class="f" for="kpText">Данные<textarea id="kpText" rows="6" placeholder="DIVIOR-KASPI-PHOTOS…" style="font-family:monospace;font-size:12px"></textarea></label>
+  <label class="opt" for="kpOver"><input type="checkbox" id="kpOver"><span><b>Заменить фото, которые я уже добавил сам</b><small>Обычно не нужно: ваши фото останутся</small></span></label>
+  <div class="err" id="kp-err"></div><button class="btn block" id="kpApply">Подставить фото</button></div>`,true)}
+async function applyKaspiPhotos(btn){
+  const txt=$('#kpText').value.trim(),over=$('#kpOver').checked;
+  if(!txt.startsWith('DIVIOR-KASPI-PHOTOS')){$('#kp-err').textContent='Похоже, вставлено не то. Данные должны начинаться с DIVIOR-KASPI-PHOTOS.';return}
+  const map=new Map();txt.split(/\r?\n/).slice(1).forEach(l=>{const [sku,locs,pid]=l.split('\t');if(sku&&locs)map.set(sku.trim(),{kimg:locs.split(',').filter(Boolean).slice(0,4),kaspiId:(pid||'').trim()})});
+  const upd={};let n=0,skipped=0;
+  S.products.forEach(p=>{const m=p.sku&&map.get(String(p.sku));if(!m)return;
+    const own=p.photo||p.photoUrl||p.hasPhoto;if(own&&!over){if(m.kaspiId&&p.kaspiId!==m.kaspiId)upd[p.id]={kaspiId:m.kaspiId};skipped++;return}
+    const patch={kimg:m.kimg};if(m.kaspiId)patch.kaspiId=m.kaspiId;if(over){patch.photoUrl='';patch.hasPhoto=false}upd[p.id]=patch;n++});
+  if(!Object.keys(upd).length){$('#kp-err').textContent='Не нашлось товаров с такими артикулами. Сначала загрузите прайс-лист из Kaspi.';return}
+  btn.disabled=true;btn.textContent='Подставляем…';
+  try{await B.importItems([],upd,(i,k)=>{btn.textContent=`Подставляем… ${Math.round(i/k*100)}%`});closeAll();document.body.classList.add('locked');toast(`Готово: фото добавлены к ${n} ${plural(n,'товару','товарам','товарам')}${skipped?`, ваши фото у ${skipped} оставлены`:''}`)}
+  catch(e){btn.disabled=false;btn.textContent='Подставить фото';$('#kp-err').textContent='Не удалось сохранить: '+(e?.message||'ошибка сети')}
+}
+
 /* ===================== режим фото ===================== */
-const hasPic=p=>!!(p.hasPhoto||p.photo||p.photoUrl);
+const hasPic=p=>!!(p.hasPhoto||p.photo||p.photoUrl||(p.kimg&&p.kimg.length));
 function photoQueue(){return S.products.filter(p=>!hasPic(p)&&p.active!==false&&!(S.pmSkipped||new Set()).has(p.id)).sort((a,b)=>num(b.price)-num(a.price))}
 function resizeImage(file,max=800){return new Promise((ok,bad)=>{const img=new Image(),url=URL.createObjectURL(file);
   img.onload=()=>{const k=Math.min(1,max/Math.max(img.width,img.height)),c=document.createElement('canvas');c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);
@@ -1189,6 +1219,9 @@ document.addEventListener('click',async e=>{
   else if(t.id==='resend'){try{await B.resendVerify();toast('Письмо отправлено')}catch(err){toast(authErr(err))}}
   else if(t.id==='recheck'){await B.reloadUser();openAccount();toast(S.owner?'Готово: админ-панель включена':'Почта ещё не подтверждена')}
   else if(d.tab){S.adminTab=d.tab;S.editing=null;renderAdmin()}
+  else if(t.id==='kaspiPhotos'){openKaspiPhotos()}
+  else if(t.id==='kpApply'){applyKaspiPhotos(t)}
+  else if(d.gal){$('#pdMain').innerHTML=`<img src="${kimgUrl(d.gal,'gallery-large')}" alt="" referrerpolicy="no-referrer">`;document.querySelectorAll('.gal-t').forEach(b=>b.classList.toggle('on',b===t))}
   else if(t.id==='photoMode'){S.photoMode=true;renderAdmin()}
   else if(t.id==='pmExit'){S.photoMode=false;renderAdmin()}
   else if(t.id==='pmReset'){S.pmSkipped=new Set();renderPhotoMode()}
