@@ -741,7 +741,8 @@ $('#modal').addEventListener('click',e=>{if(e.target.id==='modal')closeAll()});
 const specCache=new Map();
 function specsHtml(p,sp){
   const own=[['Материал',p.material],['Размер',p.size],['Бренд',p.brand]].filter(x=>x[1]);
-  const groups=(sp&&sp.s&&sp.s.length)?sp.s:(own.length?[['Характеристики',own]]:[]);
+  const norm=g=>Array.isArray(g)?g:[g.g,(g.f||[]).map(x=>Array.isArray(x)?x:[x.k,x.v])];
+  const groups=(sp&&sp.s&&sp.s.length)?sp.s.map(norm):(own.length?[['Характеристики',own]]:[]);
   const code=p.kaspiId||p.sku;
   if(!groups.length&&!code)return '<p class="muted" style="margin-top:14px">Характеристики скоро появятся. Если есть вопросы, напишите нам в WhatsApp.</p>';
   return `<div class="specs">${code?`<h4>Общие характеристики</h4><dl><dt>Код товара</dt><dd>${esc(code)}</dd></dl>`:''}${groups.map(([g,f])=>`<h4>${esc(g)}</h4><dl>${f.map(([k,v])=>`<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}</dl>`).join('')}</div>`}
@@ -1135,7 +1136,7 @@ async function applyKaspiSpecs(btn){
   if(!txt.startsWith('DIVIOR-KASPI-SPECS')){$('#ks-err').textContent='Похоже, вставлено не то. Данные должны начинаться с DIVIOR-KASPI-SPECS.';return}
   const bySku=new Map(S.products.filter(p=>p.sku).map(p=>[String(p.sku),p]));const out={},upd={};let n=0;
   txt.split(/\r?\n/).slice(1).forEach(l=>{const t=l.indexOf('\t');if(t<0)return;const sku=l.slice(0,t);const p=bySku.get(sku);if(!p)return;
-    try{const v=JSON.parse(l.slice(t+1));out[p.id]={s:v.s||[],d:v.d||''};if(v.p&&p.kaspiId!==v.p)upd[p.id]={kaspiId:v.p};n++}catch(e){}});
+    try{const v=JSON.parse(l.slice(t+1));out[p.id]={s:(v.s||[]).map(([g,f])=>({g,f:(f||[]).map(([k,x])=>({k,v:x}))})),d:v.d||''};if(v.p&&p.kaspiId!==v.p)upd[p.id]={kaspiId:v.p};n++}catch(e){}});
   if(!n){$('#ks-err').textContent='Не нашлось товаров с такими артикулами.';return}
   btn.disabled=true;btn.textContent='Сохраняем…';
   try{await B.setSpecsBatch(out,(i,k)=>{btn.textContent=`Сохраняем… ${Math.round(i/k*100)}%`});if(Object.keys(upd).length)await B.importItems([],upd);specCache.clear();
