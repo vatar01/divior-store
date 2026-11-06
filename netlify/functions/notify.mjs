@@ -60,6 +60,15 @@ export default async (req) => {
     return Response.json(await send(`💬 <b>Вопрос с сайта</b>\n\n<b>Имя:</b> ${esc(name || '—')}\n<b>Телефон:</b> ${esc(phone || '—')}\n\n${esc(text)}`));
   }
 
+  if (body.type === 'chat') {
+    // Проверяем, что такой чат существует (документ chats/{id} читается по точному id).
+    if (!/^[a-z0-9]{12,40}$/.test(body.cid || '')) return new Response('bad', { status: 400 });
+    const r = await fetch(`https://firestore.googleapis.com/v1/projects/${PROJECT}/databases/(default)/documents/chats/${body.cid}`);
+    if (!r.ok) return new Response('chat not found', { status: 403 });
+    const name = String(body.name || '').slice(0, 80), phone = String(body.phone || '').slice(0, 40), text = String(body.text || '').slice(0, 800);
+    return Response.json(await send(`💬 <b>Сообщение в чате сайта</b>\n<b>${esc(name || 'Покупатель')}</b>${phone ? ', ' + esc(phone) : ''}\n\n${esc(text)}\n\nОтветить: Админ-панель → Чаты`));
+  }
+
   if (body.type === 'test') {
     return Response.json(await send('✅ Уведомления с сайта Divior работают.'));
   }

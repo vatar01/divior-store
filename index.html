@@ -330,6 +330,33 @@ tr:last-child td{border-bottom:0}
 .hp-l.wa{border-color:#25D366}
 .hp-l:hover{border-color:var(--cobalt)}
 @media (max-width:560px){.help-panel{right:12px;bottom:80px}}
+.chat-panel{padding:0;gap:0;grid-template-rows:auto 1fr auto auto;height:min(560px,calc(100% - 110px))}
+.chat-panel .hp-head{padding:14px 16px;border-bottom:1px solid var(--line)}
+.chat-thread{overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:8px;min-height:160px}
+.msg{max-width:82%;padding:9px 12px;border-radius:14px;font-size:14.5px;line-height:1.4;white-space:pre-wrap;word-wrap:break-word}
+.msg small{display:block;font-size:11px;opacity:.65;margin-top:3px}
+.msg.me{align-self:flex-end;background:var(--gold-grad);color:var(--on-gold);border-bottom-right-radius:4px}
+.msg.them{align-self:flex-start;background:var(--porcelain);border:1px solid var(--line);border-bottom-left-radius:4px}
+.msg.sys{align-self:center;background:none;color:var(--muted);font-size:13px;text-align:center}
+.chat-form{padding:10px 12px;border-top:1px solid var(--line);display:grid;gap:8px}
+.chat-form input,.chat-form textarea{width:100%;border:1px solid var(--line);background:var(--porcelain);border-radius:10px;padding:9px 12px;font-size:14.5px;resize:none}
+.chat-form textarea{max-height:110px}
+.chat-input{display:flex;gap:8px;align-items:flex-end}
+.chat-input .btn{padding:10px 16px;flex:none}
+.hp-mini{display:flex;justify-content:center;gap:16px;padding:8px 12px 12px;font-size:13px}
+.hp-mini a{color:var(--muted)}
+.help-float .dot{position:absolute;top:4px;right:4px;width:14px;height:14px;border-radius:50%;background:var(--bad);border:2px solid var(--porcelain)}
+.help-float{position:fixed}
+.adm-chat{display:grid;grid-template-columns:300px 1fr;gap:14px;min-height:60vh}
+.adm-chat .list{display:grid;gap:6px;align-content:start;max-height:70vh;overflow-y:auto}
+.adm-chat .ci{display:grid;gap:2px;text-align:left;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface);cursor:pointer}
+.adm-chat .ci.on{border-color:var(--cobalt)}
+.adm-chat .ci b{display:flex;justify-content:space-between;gap:8px}
+.adm-chat .ci small{color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.adm-chat .ci .new{width:9px;height:9px;border-radius:50%;background:var(--bad);flex:none;margin-top:6px}
+.adm-chat .pane{display:grid;grid-template-rows:auto 1fr auto;border:1px solid var(--line);border-radius:14px;background:var(--surface);min-height:420px;max-height:70vh}
+.adm-chat .pane .chat-thread{max-height:none}
+@media (max-width:760px){.adm-chat{grid-template-columns:1fr}}
 .tab .badge{margin-left:4px;height:18px;min-width:18px;font-size:11px}
 .wa-float svg{width:30px;height:30px}
 body.locked .wa-float{display:none}
@@ -543,29 +570,22 @@ body.locked .wa-float{display:none}
     <button class="tab" role="tab" id="t-products" aria-selected="true" data-tab="products">Товары</button>
     <button class="tab" role="tab" id="t-orders" aria-selected="false" data-tab="orders">Заказы</button>
     <button class="tab" role="tab" id="t-promos" aria-selected="false" data-tab="promos">Акции</button>
-    <button class="tab" role="tab" id="t-support" aria-selected="false" data-tab="support">Обращения <span class="badge" id="supBadge" hidden>0</span></button>
+    <button class="tab" role="tab" id="t-support" aria-selected="false" data-tab="support">Чаты <span class="badge" id="supBadge" hidden>0</span></button>
     <button class="tab" role="tab" id="t-clients" aria-selected="false" data-tab="clients">Покупатели</button>
   </div>
   <div class="admin-body" id="adminBody"></div>
 </div>
 
 <button class="wa-float help-float" id="helpBtn" aria-label="Помощь и поддержка" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5v.4"/><circle cx="12" cy="16.6" r=".6" fill="currentColor"/></svg></button>
-<div class="help-panel" id="helpPanel" hidden role="dialog" aria-label="Поддержка">
-  <div class="hp-head"><b>Поддержка Divior</b><button class="x" id="helpClose" aria-label="Закрыть">×</button></div>
-  <p class="muted" style="font-size:14px">Ответим на вопросы о товарах, наличии и доставке. Вт–Вс 10:00–19:00.</p>
-  <div class="hp-links">
-    <a class="hp-l wa" href="https://wa.me/77753614090" target="_blank" rel="noopener"><b>WhatsApp</b><small>быстрее всего</small></a>
-    <a class="hp-l" href="https://t.me/+77753614090" target="_blank" rel="noopener"><b>Telegram</b><small>написать</small></a>
-    <a class="hp-l" href="tel:+77753614090"><b>Позвонить</b><small>с 10 до 19</small></a>
-  </div>
-  <form class="form" id="helpForm" novalidate style="gap:10px">
-    <b style="font-size:14px">Или оставьте вопрос, мы перезвоним</b>
-    <div class="fgrid" style="gap:10px"><label class="f" for="hf-name">Имя<input id="hf-name" name="name" autocomplete="name"></label><label class="f" for="hf-phone">Телефон<input id="hf-phone" name="phone" type="tel" autocomplete="tel" placeholder="+7"></label></div>
-    <label class="f" for="hf-text">Вопрос<textarea id="hf-text" name="text" rows="3" placeholder="Например: есть ли этот сервиз на 12 персон?"></textarea></label>
-    <input type="text" name="website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
-    <div class="err" id="hf-err"></div>
-    <button class="btn block" type="submit">Отправить вопрос</button>
+<div class="help-panel chat-panel" id="helpPanel" hidden role="dialog" aria-label="Чат с поддержкой">
+  <div class="hp-head"><div><b>Поддержка Divior</b><small class="muted" style="display:block;font-size:12.5px" id="chatStatus">Ответим в рабочее время, Вт–Вс 10:00–19:00</small></div><button class="x" id="helpClose" aria-label="Закрыть">×</button></div>
+  <div class="chat-thread" id="chatThread" aria-live="polite"></div>
+  <form id="chatForm" class="chat-form" novalidate>
+    <div class="fgrid" id="chatWho" style="gap:8px"><input id="cf-name" name="name" placeholder="Ваше имя" autocomplete="name" aria-label="Имя"><input id="cf-phone" name="phone" type="tel" placeholder="Телефон" autocomplete="tel" aria-label="Телефон"></div>
+    <div class="chat-input"><textarea id="cf-text" name="text" rows="1" placeholder="Напишите сообщение…" aria-label="Сообщение"></textarea><button class="btn" type="submit" aria-label="Отправить">➤</button></div>
+    <div class="err" id="cf-err"></div>
   </form>
+  <div class="hp-mini"><a href="https://wa.me/77753614090" target="_blank" rel="noopener">WhatsApp</a><a href="https://t.me/+77753614090" target="_blank" rel="noopener">Telegram</a><a href="tel:+77753614090">Позвонить</a></div>
 </div>
 <div class="test-bar" id="testBar" hidden><span>👁 Вы смотрите сайт как покупатель</span><button class="btn small" id="asCustomerOff">Вернуться в админку</button></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -763,17 +783,50 @@ async function notify(data){try{if(window.B&&B.demo)return;const idToken=data.ty
 function alertNew(msg){toast('🔔 '+msg);try{const c=new (window.AudioContext||window.webkitAudioContext)(),o=c.createOscillator(),g=c.createGain();o.frequency.value=880;g.gain.setValueAtTime(.15,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.5);o.connect(g).connect(c.destination);o.start();o.stop(c.currentTime+.5)}catch(e){}
   if(document.hidden){S.unseen=(S.unseen||0)+1;document.title=`(${S.unseen}) ${S.baseTitle}`}}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&S.unseen){S.unseen=0;document.title=S.baseTitle}});
-function renderTabBadges(){const b=$('#supBadge');if(!b)return;const n=(S.messages||[]).filter(m=>m.status!=='done').length;b.hidden=!n;b.textContent=n}
-function toggleHelp(on){const p=$('#helpPanel');p.hidden=!on;$('#helpBtn').setAttribute('aria-expanded',on);if(on){const pr=S.customer?.profile;if(pr){if(!$('#hf-name').value)$('#hf-name').value=pr.name||'';if(!$('#hf-phone').value)$('#hf-phone').value=pr.phone||''}}}
-async function sendHelp(f){const d=Object.fromEntries(new FormData(f));const text=String(d.text||'').trim();
-  if(d.website)return;if(text.length<3){$('#hf-err').textContent='Напишите вопрос.';return}
-  if(String(d.phone||'').replace(/\D/g,'').length<10&&!S.user){$('#hf-err').textContent='Оставьте телефон, чтобы мы могли ответить.';return}
-  const last=+(sessionStorage.getItem('divior-help-at')||0);if(Date.now()-last<60000){$('#hf-err').textContent='Вопрос уже отправлен. Подождите минуту перед следующим.';return}
-  const btn=f.querySelector('[type=submit]');btn.disabled=true;
-  const msg={name:String(d.name||'').trim().slice(0,80),phone:String(d.phone||'').trim().slice(0,40),text:text.slice(0,1500),at:Date.now(),status:'new',email:S.user?.email||'',uid:S.user?.uid||''};
-  try{await B.addMessage(msg);notify({type:'support',name:msg.name,phone:msg.phone,text:msg.text});try{sessionStorage.setItem('divior-help-at',String(Date.now()))}catch(e){}
-    f.innerHTML='<div class="note">Спасибо! Вопрос отправлен, мы свяжемся с вами в рабочее время. Если срочно, напишите в WhatsApp.</div>'}
-  catch(e){btn.disabled=false;$('#hf-err').textContent='Не удалось отправить. Напишите нам в WhatsApp.'}}
+function renderTabBadges(){const b=$('#supBadge');if(!b)return;const n=(S.chats||[]).filter(c=>c.unread).length;b.hidden=!n;b.textContent=n}
+/* ===================== чат поддержки ===================== */
+const chatId=()=>{try{return localStorage.getItem('divior-chat')}catch(e){return null}};
+const newChatId=()=>{const a=new Uint8Array(15);crypto.getRandomValues(a);return [...a].map(x=>'abcdefghijkmnpqrstuvwxyz23456789'[x%32]).join('')};
+let chatUnsub=null;
+function fmtTime(t){const d=new Date(t);return d.toDateString()===new Date().toDateString()?d.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}):d.toLocaleString('ru-RU',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}
+function threadHtml(msgs,me){if(!msgs.length)return `<div class="msg sys">Здравствуйте! Задайте вопрос о товаре, наличии или доставке. Мы ответим здесь же, в этом окне.</div>`;
+  return msgs.map(m=>`<div class="msg ${m.from===me?'me':'them'}">${esc(m.text)}<small>${m.from==='admin'&&me!=='admin'?'Divior · ':''}${fmtTime(m.at)}</small></div>`).join('')}
+function subscribeChat(){const cid=chatId();if(!cid||chatUnsub||!window.B||!B.watchChatMsgs)return;
+  chatUnsub=B.watchChatMsgs(cid,l=>{S.chatMsgs=l;drawChat();
+    const seen=+(localStorage.getItem('divior-chat-seen')||0),unseen=l.some(m=>m.from==='admin'&&m.at>seen);
+    if(!$('#helpPanel').hidden){markChatSeen()}else{setChatDot(unseen);if(unseen&&S.chatReady)toast('💬 Ответ от поддержки Divior')}S.chatReady=true})}
+function markChatSeen(){try{localStorage.setItem('divior-chat-seen',String(Date.now()))}catch(e){}setChatDot(false)}
+function setChatDot(on){const b=$('#helpBtn');let d=b.querySelector('.dot');if(on&&!d){d=document.createElement('span');d.className='dot';b.appendChild(d)}if(!on&&d)d.remove()}
+function drawChat(){const t=$('#chatThread');if(!t)return;t.innerHTML=threadHtml(S.chatMsgs||[],'client');t.scrollTop=t.scrollHeight;
+  const known=S.chatMeta||{};const pr=S.customer?.profile;$('#chatWho').hidden=!!(S.chatMsgs&&S.chatMsgs.length)||!!pr}
+function toggleHelp(on){const p=$('#helpPanel');p.hidden=!on;$('#helpBtn').setAttribute('aria-expanded',on);
+  if(on){const pr=S.customer?.profile;if(pr){$('#cf-name').value=$('#cf-name').value||pr.name||'';$('#cf-phone').value=$('#cf-phone').value||pr.phone||''}
+    subscribeChat();drawChat();markChatSeen();setTimeout(()=>$('#cf-text').focus(),50)}}
+async function sendChat(f){const text=$('#cf-text').value.trim();if(!text)return;if(text.length>1500){$('#cf-err').textContent='Слишком длинное сообщение.';return}
+  const pr=S.customer?.profile;const name=($('#cf-name').value||pr?.name||'').trim().slice(0,80),phone=($('#cf-phone').value||pr?.phone||'').trim().slice(0,40);
+  let cid=chatId(),first=false;if(!cid){cid=newChatId();first=true;try{localStorage.setItem('divior-chat',cid)}catch(e){}}
+  const btn=f.querySelector('[type=submit]');btn.disabled=true;$('#cf-err').textContent='';
+  try{await B.chatSend(cid,{from:'client',text,at:Date.now()},{name,phone,first,uid:S.user?.uid||'',email:S.user?.email||''});
+    $('#cf-text').value='';subscribeChat();
+    const lastN=+(sessionStorage.getItem('divior-chat-notified')||0);if(first||Date.now()-lastN>120000){notify({type:'chat',cid,name,phone,text});try{sessionStorage.setItem('divior-chat-notified',String(Date.now()))}catch(e){}}}
+  catch(e){$('#cf-err').textContent='Не удалось отправить. Попробуйте ещё раз или напишите в WhatsApp.'}
+  btn.disabled=false;$('#cf-text').focus()}
+/* админка: чаты */
+function renderChatsAdmin(){
+  const b=$('#adminBody'),cs=(S.chats||[]).slice().sort((a,b)=>(b.at||0)-(a.at||0));
+  const cur=cs.find(c=>c.id===S.chatOpen)||null;
+  b.innerHTML=`<div class="row" style="margin-bottom:14px;align-items:center;flex-wrap:wrap;gap:10px"><h3 style="font-size:24px">Чаты с покупателями</h3><button class="btn small ghost" id="tgTest">Проверить уведомления Telegram</button></div>
+  ${cs.length?`<div class="adm-chat"><div class="list">${cs.map(c=>`<button class="ci${c.id===S.chatOpen?' on':''}" data-chat="${esc(c.id)}"><b><span>${esc(c.name||'Покупатель')}</span>${c.unread?'<span class="new" aria-label="Новое"></span>':''}</b><small>${c.lastFrom==='admin'?'Вы: ':''}${esc(c.last||'')}</small><small>${c.phone?esc(c.phone)+' · ':''}${c.at?fmtTime(c.at):''}</small></button>`).join('')}</div>
+    <div class="pane">${cur?`<div class="hp-head" style="padding:12px 14px;border-bottom:1px solid var(--line)"><div><b style="font-size:18px">${esc(cur.name||'Покупатель')}</b><small class="muted" style="display:block">${esc([cur.phone,cur.email].filter(Boolean).join(' · ')||'контакты не указаны')}</small></div><div style="display:flex;gap:6px">${cur.phone?`<a class="btn small ghost" href="https://wa.me/${esc(String(cur.phone).replace(/\D/g,''))}" target="_blank" rel="noopener">WhatsApp</a>`:''}<button class="btn small ghost" data-chat-del="${esc(cur.id)}" style="color:var(--bad);border-color:var(--bad)">Удалить</button></div></div>
+      <div class="chat-thread" id="admThread">${threadHtml(S.admMsgs||[],'admin')}</div>
+      <form id="admChatForm" class="chat-form"><div class="chat-input"><textarea id="ac-text" rows="2" placeholder="Ответ покупателю…" aria-label="Ответ"></textarea><button class="btn" type="submit">Отправить</button></div></form>`
+      :`<div class="empty" style="margin:auto;border:0">Выберите чат слева</div>`}</div></div>`
+    :`<div class="empty">Чатов пока нет. Когда покупатель напишет через кнопку поддержки на сайте, переписка появится здесь, а вам придёт уведомление.</div>`}`;
+  const th=$('#admThread');if(th)th.scrollTop=th.scrollHeight;
+}
+function openAdmChat(id){S.chatOpen=id;S.admMsgs=[];if(S.admChatUnsub)S.admChatUnsub();
+  S.admChatUnsub=B.watchChatMsgs(id,l=>{S.admMsgs=l;if(S.adminTab==='support'){const th=$('#admThread');if(th){th.innerHTML=threadHtml(l,'admin');th.scrollTop=th.scrollHeight}else renderAdmin()}});
+  const c=(S.chats||[]).find(x=>x.id===id);if(c&&c.unread)B.chatMarkRead(id).catch(()=>{});renderAdmin()}
 function renderTestBar(){const b=$('#testBar');if(b)b.hidden=!(S.realOwner&&S.asCustomer)}
 function setAsCustomer(on){S.asCustomer=on;try{on?sessionStorage.setItem('divior-as-customer','1'):sessionStorage.removeItem('divior-as-customer')}catch(e){}S.owner=S.realOwner&&!on;
   if(on){closeAdmin();window.scrollTo({top:0});toast('Режим покупателя: админ-кнопки и скрытые товары не видны')}else{toast('Вы снова администратор')}renderTestBar();renderAll()}
@@ -786,7 +839,7 @@ function closeAll(){$('#cart').classList.remove('on');$('#cart').setAttribute('a
   $('#scrim').classList.remove('on');if(!$('#admin').classList.contains('on'))document.body.classList.remove('locked');lastFocus?.focus?.()}
 function openModal(title,html,narrow){lastFocus=document.activeElement;$('#modalTitle').textContent=title;$('#modalBody').innerHTML=html;$('#modalBox').classList.toggle('narrow',!!narrow);
   $('#cart').classList.remove('on');lock();$('#modal').classList.add('on');$('#modal').setAttribute('aria-hidden','false');$('#modalBox').scrollTop=0;setTimeout(hydratePhotos);setTimeout(()=>$('#modalBox .x').focus(),50)}
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#helpPanel').hidden){toggleHelp(false);return}if(e.key==='Escape'){if($('#modal').classList.contains('on')||$('#cart').classList.contains('on'))closeAll();else if($('#admin').classList.contains('on'))closeAdmin()}});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey&&(e.target.id==='cf-text'||e.target.id==='ac-text')){e.preventDefault();e.target.form.requestSubmit();return}if(e.key==='Escape'&&!$('#helpPanel').hidden){toggleHelp(false);return}if(e.key==='Escape'){if($('#modal').classList.contains('on')||$('#cart').classList.contains('on'))closeAll();else if($('#admin').classList.contains('on'))closeAdmin()}});
 $('#scrim').onclick=closeAll;
 document.querySelectorAll('[data-close]').forEach(b=>b.onclick=closeAll);
 $('#modal').addEventListener('click',e=>{if(e.target.id==='modal')closeAll()});
@@ -1031,7 +1084,7 @@ async function placeOrder(f){
 /* ===================== админ-панель ===================== */
 let adminSubs=[];
 function openAdmin(){if(!S.owner)return;closeAll();document.body.classList.add('locked');$('#admin').classList.add('on');
-  if(!adminSubs.length){adminSubs=[B.watchAllOrders(l=>{const prev=S.seenOrders;S.seenOrders=new Set(l.map(o=>o.id));if(prev){const fresh=l.filter(o=>!prev.has(o.id));if(fresh.length)alertNew(`Новый заказ ${fresh[0].num||''} на ${money(fresh[0].total)}`)}S.allOrders=l;if(!S.editing)renderAdmin()}),B.watchMessages(l=>{const prev=S.seenMsgs;S.seenMsgs=new Set(l.map(m=>m.id));if(prev&&l.some(m=>!prev.has(m.id)))alertNew('Новый вопрос в поддержку');S.messages=l;renderTabBadges();if(S.adminTab==='support'&&!S.editing)renderAdmin()}),B.watchUsers(l=>{S.customers=l;if(!S.editing)renderAdmin()})]}
+  if(!adminSubs.length){adminSubs=[B.watchAllOrders(l=>{const prev=S.seenOrders;S.seenOrders=new Set(l.map(o=>o.id));if(prev){const fresh=l.filter(o=>!prev.has(o.id));if(fresh.length)alertNew(`Новый заказ ${fresh[0].num||''} на ${money(fresh[0].total)}`)}S.allOrders=l;if(!S.editing)renderAdmin()}),B.watchChats(l=>{const prevU=S.chatUnreadKeys||new Set();const nowU=new Set(l.filter(c=>c.unread).map(c=>c.id+':'+c.at));if(S.chats&&[...nowU].some(k=>!prevU.has(k)))alertNew('Новое сообщение в чате');S.chatUnreadKeys=nowU;S.chats=l;renderTabBadges();if(S.adminTab==='support'&&!S.editing&&!(document.activeElement&&document.activeElement.id==='ac-text'))renderAdmin()}),B.watchUsers(l=>{S.customers=l;if(!S.editing)renderAdmin()})]}
   renderAdmin()}
 function closeAdmin(){$('#admin').classList.remove('on');document.body.classList.remove('locked');S.editing=null}
 function stopAdmin(){adminSubs.forEach(u=>u&&u());adminSubs=[];S.allOrders=[];S.customers=[]}
@@ -1064,11 +1117,7 @@ function renderAdmin(){
         <td><select class="sel" style="height:36px" id="st-${esc(o.id)}" data-status="${esc(o.id)}" aria-label="Статус заказа ${esc(o.num||o.id)}">${Object.entries(STATUS).map(([k,v])=>`<option value="${k}" ${o.status===k?'selected':''}>${v[0]}</option>`).join('')}</select></td></tr>`).join('')}
       </tbody></table></div>`:`<div class="empty">Заказов пока нет. Когда покупатель оформит заказ, он появится здесь.</div>`}`;
   } else if(S.adminTab==='support'){
-    const ms=(S.messages||[]).slice().sort((a,b)=>b.at-a.at);
-    b.innerHTML=`<div class="row" style="margin-bottom:14px;align-items:center;flex-wrap:wrap;gap:10px"><h3 style="font-size:24px">Обращения в поддержку</h3><button class="btn small ghost" id="tgTest">Проверить уведомления Telegram</button></div>
-      ${ms.length?ms.map(m=>`<div class="order" style="${m.status==='done'?'opacity:.55':''}"><div class="row"><b>${esc(m.name||'Без имени')}${m.phone?` · <a href="tel:${esc(m.phone.replace(/[^\d+]/g,''))}">${esc(m.phone)}</a>`:''}</b><span class="muted" style="font-size:13px">${new Date(m.at).toLocaleString('ru-RU',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</span></div>
-        <div style="white-space:pre-line">${esc(m.text)}</div>${m.email?`<small class="muted">${esc(m.email)}</small>`:''}
-        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">${m.phone?`<a class="btn small" href="https://wa.me/${esc(m.phone.replace(/\D/g,''))}" target="_blank" rel="noopener">Ответить в WhatsApp</a>`:''}<button class="btn small ghost" data-msg-done="${esc(m.id)}">${m.status==='done'?'Вернуть в работу':'Готово'}</button><button class="btn small ghost" data-msg-del="${esc(m.id)}" style="color:var(--bad);border-color:var(--bad)">Удалить</button></div></div>`).join(''):`<div class="empty">Обращений пока нет. Когда покупатель задаст вопрос через кнопку «Помощь», он появится здесь и придёт вам в Telegram.</div>`}`;
+    renderChatsAdmin();
   } else if(S.adminTab==='promos'){
     renderPromoAdmin();
   } else {
@@ -1396,6 +1445,8 @@ document.addEventListener('click',async e=>{
   else if(t.id==='helpBtn'){toggleHelp($('#helpPanel').hidden)}
   else if(t.id==='helpClose'){toggleHelp(false)}
   else if(t.id==='tgTest'){t.disabled=true;const r=await notify({type:'test'});t.disabled=false;toast(r&&r.ok?'Отправили тестовое сообщение в Telegram':r&&r.reason==='not-configured'?'Telegram ещё не настроен в Netlify (см. инструкцию)':'Не получилось: функция уведомлений недоступна')}
+  else if(d.chat){openAdmChat(d.chat)}
+  else if(d.chatDel){if(t.dataset.sure){try{await B.chatDelete(d.chatDel);S.chatOpen=null;renderAdmin()}catch(err){toast('Не удалось удалить')}}else{t.dataset.sure='1';t.textContent='Точно удалить?'}}
   else if(d.msgDone){const m=(S.messages||[]).find(x=>x.id===d.msgDone);try{await B.updateMessage(d.msgDone,{status:m&&m.status==='done'?'new':'done'})}catch(err){toast('Не удалось')}}
   else if(d.msgDel){if(t.dataset.sure){try{await B.deleteMessage(d.msgDel)}catch(err){toast('Не удалось удалить')}}else{t.dataset.sure='1';t.textContent='Точно?'}}
   else if(t.id==='asCustomerOn'){setAsCustomer(true)}
@@ -1448,7 +1499,8 @@ document.addEventListener('keydown',e=>{if(e.target.id!=='co-street')return;cons
 document.addEventListener('mousedown',e=>{if(e.target.closest('.sug'))e.preventDefault()});
 document.addEventListener('focusout',e=>{if(e.target.id==='co-street')setTimeout(()=>{const b=$('#addrSug');if(b&&!b.contains(document.activeElement))b.hidden=true},150)});
 document.addEventListener('submit',async e=>{
-  if(e.target.id==='helpForm'){e.preventDefault();sendHelp(e.target);return}
+  if(e.target.id==='chatForm'){e.preventDefault();sendChat(e.target);return}
+  if(e.target.id==='admChatForm'){e.preventDefault();const t=$('#ac-text');const text=t.value.trim();if(!text||!S.chatOpen)return;t.value='';try{await B.chatReply(S.chatOpen,text)}catch(err){toast('Не удалось отправить');t.value=text}return}
   if(e.target.id==='prForm'){e.preventDefault();const pr=readPromo();if(!pr.title){$('#pr-err').textContent='Введите заголовок акции.';return}
     const list=(S.promos||[]).filter(x=>x.id!==pr.id);const i=(S.promos||[]).findIndex(x=>x.id===pr.id);if(i>=0)list.splice(i,0,pr);else list.unshift(pr);
     try{await savePromos(list);S.promoEdit=null;toast('Акция сохранена');renderAdmin()}catch(err){$('#pr-err').textContent=err?.code==='permission-denied'?'Нет прав: обновите правила базы в Firebase (раздел site).':'Не удалось сохранить. Если картинка большая, попробуйте другую.'}
@@ -1505,6 +1557,12 @@ function demoBackend(){
     async addOrder(o){const i='o'+id();st.orders[i]=o;emit('orders');return i},
     idToken:async()=>null,
     async addMessage(m){st.messages=st.messages||{};st.messages['m'+id()]=m;emit('users')},
+    async chatSend(cid,msg,meta){st.chats=st.chats||{};const c=st.chats[cid]||{msgs:[]};Object.assign(c,{last:msg.text.slice(0,140),lastFrom:'client',at:msg.at,unread:true,name:meta.name||c.name||'',phone:meta.phone||c.phone||''});c.msgs.push(msg);st.chats[cid]=c;emit('users')},
+    watchChatMsgs:(cid,f)=>watch('users',()=>f(((st.chats||{})[cid]||{msgs:[]}).msgs.map((m,i)=>({id:String(i),...m})))),
+    watchChats:f=>watch('users',()=>f(Object.entries(st.chats||{}).map(([i,{msgs,...c}])=>({id:i,...c})))),
+    async chatReply(cid,text){const c=st.chats[cid];const at=Date.now();c.msgs.push({from:'admin',text,at});Object.assign(c,{last:text,lastFrom:'admin',at,unread:false});emit('users')},
+    async chatMarkRead(cid){st.chats[cid].unread=false;emit('users')},
+    async chatDelete(cid){delete st.chats[cid];emit('users')},
     watchMessages:f=>watch('users',()=>f(Object.entries(st.messages||{}).map(([i,v])=>({id:i,...v})))),
     async updateMessage(i,p){st.messages[i]={...st.messages[i],...p};emit('users')},
     async deleteMessage(i){delete st.messages[i];emit('users')},
@@ -1557,6 +1615,14 @@ async function firebaseBackend(cfg){
     addOrder:async o=>(await F.addDoc(F.collection(db,'orders'),o)).id,
     idToken:()=>auth.currentUser?auth.currentUser.getIdToken():Promise.resolve(null),
     addMessage:m=>F.addDoc(F.collection(db,'messages'),m),
+    async chatSend(cid,msg,meta){const ref=F.doc(db,'chats',cid);const base={last:msg.text.slice(0,140),lastFrom:'client',at:msg.at,unread:true,name:meta.name||'',phone:meta.phone||''};
+      if(meta.first)await F.setDoc(ref,{...base,uid:meta.uid||'',email:meta.email||''});else await F.updateDoc(ref,base);
+      await F.addDoc(F.collection(db,'chats',cid,'msgs'),msg)},
+    watchChatMsgs:(cid,f)=>F.onSnapshot(F.query(F.collection(db,'chats',cid,'msgs'),F.orderBy('at')),s=>f(rows(s)),()=>f([])),
+    watchChats:f=>F.onSnapshot(F.collection(db,'chats'),s=>f(rows(s)),()=>f([])),
+    async chatReply(cid,text){const at=Date.now();await F.addDoc(F.collection(db,'chats',cid,'msgs'),{from:'admin',text:text.slice(0,1500),at});await F.updateDoc(F.doc(db,'chats',cid),{last:text.slice(0,140),lastFrom:'admin',at,unread:false})},
+    chatMarkRead:cid=>F.updateDoc(F.doc(db,'chats',cid),{unread:false}),
+    chatDelete:cid=>F.deleteDoc(F.doc(db,'chats',cid)),
     watchMessages:f=>F.onSnapshot(F.collection(db,'messages'),s=>f(rows(s)),()=>f([])),
     updateMessage:(i,p)=>F.updateDoc(F.doc(db,'messages',i),p),
     deleteMessage:i=>F.deleteDoc(F.doc(db,'messages',i)),
@@ -1582,6 +1648,7 @@ loadCart();renderInfo();renderAll();
   catch(e){S.failed='Не удалось подключиться к магазину. Проверьте интернет и обновите страницу.';renderGrid();return}
   if(B.demo){const bn=$('#banner');bn.innerHTML=`Демо-режим: данные хранятся только в этом браузере. Чтобы открыть админ-панель, зарегистрируйтесь с почтой <b>${esc(ADMIN_EMAIL)}</b>.`}
   const timer=setTimeout(()=>{if(!S.loaded){S.failed='Каталог пока не загрузился. Проверьте интернет: товары появятся, как только связь восстановится.';renderGrid()}},10000);
+  setTimeout(subscribeChat,500);
   B.watchPromos(l=>{S.promos=l;renderPromo();if($('#admin').classList.contains('on')&&S.adminTab==='promos'&&!S.promoEdit)renderAdmin()});
   B.watchProducts(list=>{clearTimeout(timer);S.products=list;S.loaded=true;S.failed=false;renderAll()},
     ()=>{clearTimeout(timer);S.failed='Не удалось загрузить каталог. Обновите страницу позже.';renderGrid()});
