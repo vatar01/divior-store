@@ -65,11 +65,11 @@ header.top{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--p
 @media (max-width:560px){.tagline{letter-spacing:.1em!important;font-size:8px!important}.wm{font-size:34px!important}}
 .tagline{white-space:nowrap;font-size:9.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-top:-2px}
 .menu{display:flex;gap:24px;margin-left:12px}
-.menu a{text-decoration:none;font-weight:500;font-size:15px;color:var(--muted)}
+.menu a{text-decoration:none;font-weight:500;font-size:15px;color:var(--muted);white-space:nowrap}
 .menu a:hover{color:var(--cobalt)}
 .actions{margin-left:auto;display:flex;gap:8px;align-items:center}
 .burger{display:none}
-@media (max-width:900px){
+@media (max-width:1080px){
   .menu{display:none;position:absolute;top:68px;left:0;right:0;flex-direction:column;gap:0;background:var(--surface);border-bottom:1px solid var(--line);margin:0;padding:8px clamp(16px,4vw,36px)}
   .menu.open{display:flex}
   .menu a{padding:12px 0;border-bottom:1px solid var(--line)}
