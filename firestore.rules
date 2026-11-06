@@ -10,7 +10,15 @@ service cloud.firestore {
     }
     function signedIn() { return request.auth != null; }
 
-    // Каталог видят все, менять может только администратор.
+    // Каталог (пачками по 300 товаров) и фото товаров видят все, менять может только администратор.
+    match /catalog/{chunk} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /photos/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
     match /products/{id} {
       allow read: if true;
       allow write: if isAdmin();

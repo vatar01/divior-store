@@ -261,7 +261,7 @@ th{font-size:12.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--mu
 td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 tr:last-child td{border-bottom:0}
 .tbl-actions{display:flex;gap:6px;justify-content:flex-end}
-.switch{position:relative;width:40px;height:22px;flex:none}
+.switch{position:relative;display:inline-block;width:40px;height:22px;flex:none;vertical-align:middle}
 .switch input{opacity:0;width:100%;height:100%;position:absolute;cursor:pointer;margin:0}
 .switch span{position:absolute;inset:0;border-radius:11px;background:var(--line);transition:background .2s;pointer-events:none}
 .switch span::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .2s}
@@ -480,17 +480,23 @@ const SEED=[{"name": "Тарелка обеденная «Империал», 26
 
 /* ===================== данные и справочники ===================== */
 const CATS=[
+  {id:'sets',name:'Сервизы и наборы',shape:'set'},
   {id:'plates',name:'Тарелки',shape:'plate'},
   {id:'cups',name:'Чашки и кружки',shape:'cup'},
-  {id:'bowls',name:'Миски и салатники',shape:'bowl'},
+  {id:'bowls',name:'Пиалы и салатники',shape:'bowl'},
   {id:'teapots',name:'Чайники',shape:'teapot'},
   {id:'glass',name:'Бокалы и стаканы',shape:'glass'},
+  {id:'cutlery',name:'Столовые приборы',shape:'cutlery'},
+  {id:'serving',name:'Сервировка',shape:'dish'},
   {id:'cookware',name:'Кастрюли и сковороды',shape:'pot'},
-  {id:'sets',name:'Наборы и сервизы',shape:'set'}
+  {id:'kitchen',name:'Кухонная утварь',shape:'jar'},
+  {id:'appliances',name:'Техника для кухни',shape:'pot'},
+  {id:'light',name:'Свет и декор',shape:'lamp'},
+  {id:'other',name:'Разное',shape:'box'}
 ];
-const SHAPES={plate:'Тарелка',bowl:'Миска',cup:'Чашка с блюдцем',mug:'Кружка',teapot:'Чайник',glass:'Бокал',tumbler:'Стакан',pot:'Кастрюля',pan:'Сковорода',set:'Набор'};
-const COLORS={'#FFFFFF':'Белый','#1F3FA6':'Синий','#2B2E33':'Графит','#8FA58B':'Шалфей','#D9C6A5':'Песочный','#C8643B':'Терракота','#A9C7E8':'Голубой','#E9DCCB':'Молочный','#C9A45C':'Золотой','#141414':'Чёрный'};
-const LIGHT=['#FFFFFF','#D9C6A5','#A9C7E8','#E9DCCB'];
+const SHAPES={plate:'Тарелка',bowl:'Миска',cup:'Чашка с блюдцем',mug:'Кружка',teapot:'Чайник',glass:'Бокал',tumbler:'Стакан',pot:'Кастрюля',pan:'Сковорода',set:'Набор',cutlery:'Приборы',dish:'Блюдо',jar:'Банка',lamp:'Люстра',box:'Коробка'};
+const COLORS={'#FFFFFF':'Белый','#1F3FA6':'Синий','#2B2E33':'Графит','#8FA58B':'Шалфей','#D9C6A5':'Песочный','#C8643B':'Терракота','#A9C7E8':'Голубой','#E9DCCB':'Молочный','#C9A45C':'Золотой','#141414':'Чёрный','#D8DCE2':'Серебристый'};
+const LIGHT=['#FFFFFF','#D9C6A5','#A9C7E8','#E9DCCB','#D8DCE2'];
 const PATTERNS={none:'Без узора',gzhel:'Роспись цветами',stripe:'Полоска',dots:'Горошек',rim:'Кайма'};
 const SHIP=[
   {id:'courier',name:'Курьером по Алматы',note:'На следующий день, с 10:00 до 21:00',cost:1500,freeFrom:30000},
@@ -505,7 +511,7 @@ const PAY=[
 ];
 const STATUS={new:['Новый','s-new'],paid:['Оплачен','s-paid'],ship:['В доставке','s-ship'],done:['Выполнен','s-done'],cancel:['Отменён','s-cancel']};
 
-const S={products:[],loaded:false,failed:false,cat:'all',q:'',sort:'pop',cart:{},user:null,ready:false,owner:false,customer:null,myOrders:[],allOrders:[],customers:[],adminTab:'products',editing:null,afterLogin:null};
+const S={products:[],loaded:false,failed:false,cat:'all',q:'',sort:'pop',cart:{},limit:24,aq:'',acat:'all',apage:0,user:null,ready:false,owner:false,customer:null,myOrders:[],allOrders:[],customers:[],adminTab:'products',editing:null,afterLogin:null};
 
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -542,12 +548,27 @@ function art(p){
     case 'glass': g=`${shadow}<path d="M66,22 H134 C136,70 120,92 100,92 C80,92 64,70 66,22 Z" fill="${base}" fill-opacity="${light?.35:.6}" stroke="${light?'#8796BC':edge}" stroke-width="1.6"/><path d="M70,52 C80,58 120,58 130,52 C126,80 112,90 100,90 C88,90 74,80 70,52 Z" fill="${light?'#7A2E3E':base}" opacity=".55"/><rect x="97" y="92" width="6" height="40" fill="${light?'#C9D0E3':base}"/><ellipse cx="100" cy="136" rx="30" ry="6" fill="${light?'#C9D0E3':base}" stroke="${light?'#8796BC':edge}"/><path d="M80,30 C78,50 82,66 88,74" stroke="#fff" stroke-width="3" fill="none" opacity=".7"/>`;break;
     case 'tumbler': g=`${shadow}<path d="M58,30 H142 L132,138 H68 Z" fill="${base}" fill-opacity="${light?.35:.65}" stroke="${light?'#8796BC':edge}" stroke-width="1.6"/>${over('M58,30 H142 L132,138 H68 Z')}<path d="M72,44 L76,124" stroke="#fff" stroke-width="3" opacity=".7"/>`;break;
     case 'pot': g=`${shadow}<path d="M30,62 h16 M154,62 h16" stroke="${light?'#2B2E33':base}" stroke-width="9" stroke-linecap="round"/>${body('M44,52 H156 V124 Q156,138 142,138 H58 Q44,138 44,124 Z')}<path d="M40,52 Q100,30 160,52 Z" fill="${base}" stroke="${edge}" stroke-width="1.5"/><rect x="90" y="30" width="20" height="9" rx="4" fill="${light?'#2B2E33':base}"/>${rim('M44,66 H156')}`;break;
+    case 'cutlery': g=`${shadow}<ellipse cx="68" cy="46" rx="15" ry="22" fill="${base}" stroke="${edge}" stroke-width="1.5"/><rect x="65" y="64" width="6" height="76" rx="3" fill="${base}" stroke="${edge}"/><path d="M88,18 v30 q0,16 12,16 q12,0 12,-16 v-30" fill="none" stroke="${base==='#FFFFFF'?'#C9CDD3':base}" stroke-width="5" stroke-linecap="round"/><path d="M96,18 v26 M104,18 v26" stroke="${base==='#FFFFFF'?'#C9CDD3':base}" stroke-width="4" stroke-linecap="round"/><rect x="97" y="62" width="6" height="78" rx="3" fill="${base}" stroke="${edge}"/><path d="M128,18 q18,14 13,58 h-11 z" fill="${base}" stroke="${edge}" stroke-width="1.5"/><rect x="129" y="74" width="9" height="66" rx="4" fill="${base}" stroke="${edge}"/>${pat==='rim'?`<path d="M65,96 h6 M97,96 h6 M129,96 h9" stroke="${deco}" stroke-width="5"/>`:''}`;break;
+    case 'dish': g=`<ellipse cx="100" cy="138" rx="78" ry="8" fill="#000" opacity=".08"/>${body('M20,80 a80,48 0 1,0 160,0 a80,48 0 1,0 -160,0')}<ellipse cx="100" cy="80" rx="58" ry="32" fill="${base}" stroke="${edge}" stroke-width="1.2"/>${rim('M28,80 a72,42 0 1,0 144,0 a72,42 0 1,0 -144,0')}`;break;
+    case 'jar': g=`${shadow}${body('M58,52 H142 V128 Q142,140 130,140 H70 Q58,140 58,128 Z')}<rect x="52" y="34" width="96" height="20" rx="7" fill="#B8895A" stroke="rgba(0,0,0,.2)"/>${rim('M58,70 H142')}`;break;
+    case 'lamp': g=`<path d="M100,0 V34" stroke="#8C7440" stroke-width="3"/><circle cx="100" cy="40" r="9" fill="${deco==='#FFFFFF'?'#C9A45C':deco}"/>${[-56,-28,0,28,56].map(dx=>`<path d="M100,46 Q${100+dx},${dx?60:58} ${100+dx},${dx?84:96}" fill="none" stroke="#C9A45C" stroke-width="3"/><circle cx="${100+dx}" cy="${dx?78:90}" r="13" fill="#FFE9A8" opacity=".35"/><path d="M${92+dx},${dx?90:102} h16 l-3,10 h-10 z" fill="${base==='#FFFFFF'?'#C9A45C':base}"/><ellipse cx="${100+dx}" cy="${dx?82:94}" rx="5" ry="8" fill="#FFF4CF"/>`).join('')}<path d="M70,112 q30,22 60,0" fill="none" stroke="#E6D3A0" stroke-width="2" stroke-dasharray="2 5"/>`;break;
+    case 'box': g=`${shadow}<rect x="52" y="64" width="96" height="76" rx="6" fill="${base}" stroke="${edge}" stroke-width="1.5"/><rect x="44" y="48" width="112" height="22" rx="6" fill="${base}" stroke="${edge}" stroke-width="1.5"/><rect x="94" y="48" width="12" height="92" fill="${deco}"/><path d="M100,48 C80,22 64,36 84,46 Z M100,48 C120,22 136,36 116,46 Z" fill="${deco}"/>`;break;
     case 'pan': g=`<ellipse cx="80" cy="140" rx="60" ry="7" fill="#000" opacity=".08"/><path d="M128,84 L188,62" stroke="${light?'#2B2E33':'#3A2A20'}" stroke-width="11" stroke-linecap="round"/>${body(circ(78,84,56))}<circle cx="78" cy="84" r="42" fill="#2B2E33" opacity="${light?.85:.35}"/>`;break;
     case 'set': g=`<ellipse cx="96" cy="146" rx="74" ry="7" fill="#000" opacity=".08"/>${[0,1,2].map(i=>`<ellipse cx="80" cy="${134-i*12}" rx="${62-i*4}" ry="${11-i}" fill="${base}" stroke="${edge}" stroke-width="1.5"/>`).join('')}${pat!=='none'&&pat!=='rim'?`<ellipse cx="80" cy="110" rx="54" ry="9" fill="url(#${id})"/>`:''}${body('M120,62 H176 C176,96 164,112 148,112 C132,112 120,96 120,62 Z')}<path d="M174,70 C192,70 192,96 170,98" fill="none" stroke="${edge}" stroke-width="5"/>${rim('M120,70 H176')}`;break;
   }
   return `<svg viewBox="0 0 200 160" aria-hidden="true"><defs>${defs}</defs>${g}</svg>`;
 }
-const pic=p=>p.photo?`<img src="${esc(p.photo)}" alt="${esc(p.name)}">`:art(p);
+const photoCache=new Map();
+const PIX='data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
+const pic=p=>p.photo?`<img src="${esc(p.photo)}" alt="${esc(p.name)}">`
+  :p.photoUrl?`<img src="${esc(p.photoUrl)}" alt="${esc(p.name)}" loading="lazy" referrerpolicy="no-referrer">`
+  :p.hasPhoto?`<img class="lp" data-pid="${esc(p.id)}" alt="${esc(p.name)}" src="${photoCache.get(p.id)||PIX}">`:art(p);
+let photoObs=null;
+function hydratePhotos(){
+  const imgs=document.querySelectorAll('img.lp:not([data-h])');if(!imgs.length||!window.B)return;
+  if(!photoObs)photoObs=new IntersectionObserver(es=>es.forEach(en=>{if(!en.isIntersecting)return;const img=en.target;photoObs.unobserve(img);loadPhoto(img)}),{rootMargin:'300px'});
+  imgs.forEach(img=>{img.dataset.h='1';if(photoCache.has(img.dataset.pid))img.src=photoCache.get(img.dataset.pid);else photoObs.observe(img)})}
+async function loadPhoto(img){const id=img.dataset.pid;try{let d=photoCache.get(id);if(!d){d=await B.getPhoto(id);if(d)photoCache.set(id,d)}if(d)document.querySelectorAll(`img.lp[data-pid="${CSS.escape(id)}"]`).forEach(i=>i.src=d)}catch(e){}}
 
 /* ===================== тарелка в шапке ===================== */
 (function plate(){
@@ -595,14 +616,16 @@ function add(id){const p=prod(id);const cur=S.cart[id]||0;const max=p.stock==nul
 
 /* ===================== витрина ===================== */
 function renderCats(){
-  $('#cats').innerHTML=CATS.map(c=>{const n=S.products.filter(p=>p.cat===c.id&&visible(p)).length;
+  const cnt={};S.products.forEach(p=>{if(visible(p))cnt[p.cat]=(cnt[p.cat]||0)+1});
+  const shown=CATS.filter(c=>cnt[c.id]||S.owner||!S.products.length);
+  $('#cats').innerHTML=shown.map(c=>{const n=cnt[c.id]||0;
     return `<button class="cat" data-cat="${c.id}"><div class="art">${art({shape:c.shape,color:'#FFFFFF',pattern:'rim',deco:'#B8913F'})}</div><b>${c.name}</b><span>${n} ${plural(n,'товар','товара','товаров')}</span></button>`}).join('');
-  $('#chips').innerHTML=[{id:'all',name:'Все'},...CATS].map(c=>`<button class="chip" data-chip="${c.id}" aria-pressed="${S.cat===c.id}">${c.name}</button>`).join('');
+  $('#chips').innerHTML=[{id:'all',name:'Все'},...shown].map(c=>`<button class="chip" data-chip="${c.id}" aria-pressed="${S.cat===c.id}">${c.name}</button>`).join('');
 }
 function filtered(){
   const q=S.q.trim().toLowerCase();
   let list=S.products.filter(visible).filter(p=>S.cat==='all'||p.cat===S.cat)
-    .filter(p=>!q||[p.name,p.material,p.desc,catName(p.cat)].join(' ').toLowerCase().includes(q));
+    .filter(p=>!q||[p.name,p.brand,p.material,p.desc,p.sku,catName(p.cat)].join(' ').toLowerCase().includes(q));
   const by={pop:(a,b)=>(num(b.sold)-num(a.sold))||(num(b.created)-num(a.created)),cheap:(a,b)=>num(a.price)-num(b.price),exp:(a,b)=>num(b.price)-num(a.price),new:(a,b)=>num(b.created)-num(a.created)};
   return list.sort(by[S.sort]);
 }
@@ -613,7 +636,8 @@ function renderGrid(){
   const list=filtered();
   $('#found').textContent=`${list.length} ${plural(list.length,'товар','товара','товаров')}`;
   if(!list.length){g.innerHTML=`<div class="empty">${S.products.length?'Ничего не нашлось. Попробуйте другой запрос или раздел.':'В каталоге пока нет товаров.'+(S.owner?' Добавьте первый в админ-панели.':'')}</div>`;return}
-  g.innerHTML=list.map(p=>{const q=S.cart[p.id]||0;const out=p.stock!=null&&num(p.stock)<=0;
+  const more=list.length-S.limit;
+  g.innerHTML=list.slice(0,S.limit).map(p=>{const q=S.cart[p.id]||0;const out=p.stock!=null&&num(p.stock)<=0;
     const sale=num(p.oldPrice)>num(p.price);
     return `<article class="card">
       <button class="media" data-open="${p.id}" aria-label="Подробнее: ${esc(p.name)}">${pic(p)}
@@ -621,13 +645,13 @@ function renderGrid(){
         ${p.active===false?'<span class="tag hidden">Скрыт</span>':''}</button>
       <div class="body">
         <button class="name" data-open="${p.id}">${esc(p.name)}</button>
-        <span class="meta">${esc(p.material||catName(p.cat))}${out?' · нет в наличии':''}</span>
+        <span class="meta">${esc([p.brand,p.material].filter(Boolean).join(' · ')||catName(p.cat))}${out?' · нет в наличии':''}</span>
         <div class="foot">
           <span class="cost price">${money(p.price)}${sale?`<span class="old">${money(p.oldPrice)}</span>`:''}</span>
           ${q?`<span class="stepper"><button data-dec="${p.id}" aria-label="Меньше">−</button><span>${q}</span><button data-inc="${p.id}" aria-label="Больше">+</button></span>`
              :`<button class="btn small" data-add="${p.id}" ${out?'disabled':''}>${out?'Нет':'В корзину'}</button>`}
         </div>
-      </div></article>`}).join('');
+      </div></article>`}).join('')+(more>0?`<div style="grid-column:1/-1;display:flex;justify-content:center;padding-top:8px"><button class="btn ghost" id="showMore">Показать ещё (${Math.min(more,24)} из ${more})</button></div>`:'');
 }
 function renderHeader(){
   $('#cartCount').textContent=cartQty();
@@ -638,7 +662,7 @@ function renderInfo(){
   $('#shipList').innerHTML=SHIP.map(s=>`<li><span>${s.name}<br><small class="muted">${s.note}</small></span><b class="price">${s.cost?money(s.cost):'Бесплатно'}${s.freeFrom?`<br><small class="muted" style="font-weight:400">бесплатно от ${money(s.freeFrom)}</small>`:''}</b></li>`).join('');
   $('#payList').innerHTML=PAY.map(p=>`<div class="pay"><i>${p.ic}</i><div><b>${p.name}</b><small>${p.note}</small></div></div>`).join('');
 }
-function renderAll(){renderHeader();renderCats();renderGrid();if($('#cart').classList.contains('on'))renderCart();if($('#admin').classList.contains('on'))renderAdmin()}
+function renderAll(){renderHeader();renderCats();renderGrid();setTimeout(hydratePhotos);if($('#cart').classList.contains('on'))renderCart();if($('#admin').classList.contains('on'))renderAdmin()}
 
 /* ===================== оверлеи ===================== */
 let lastFocus=null;
@@ -646,7 +670,7 @@ function lock(){document.body.classList.add('locked');$('#scrim').classList.add(
 function closeAll(){$('#cart').classList.remove('on');$('#cart').setAttribute('aria-hidden','true');$('#modal').classList.remove('on');$('#modal').setAttribute('aria-hidden','true');
   $('#scrim').classList.remove('on');if(!$('#admin').classList.contains('on'))document.body.classList.remove('locked');lastFocus?.focus?.()}
 function openModal(title,html,narrow){lastFocus=document.activeElement;$('#modalTitle').textContent=title;$('#modalBody').innerHTML=html;$('#modalBox').classList.toggle('narrow',!!narrow);
-  $('#cart').classList.remove('on');lock();$('#modal').classList.add('on');$('#modal').setAttribute('aria-hidden','false');$('#modalBox').scrollTop=0;setTimeout(()=>$('#modalBox .x').focus(),50)}
+  $('#cart').classList.remove('on');lock();$('#modal').classList.add('on');$('#modal').setAttribute('aria-hidden','false');$('#modalBox').scrollTop=0;setTimeout(hydratePhotos);setTimeout(()=>$('#modalBox .x').focus(),50)}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){if($('#modal').classList.contains('on')||$('#cart').classList.contains('on'))closeAll();else if($('#admin').classList.contains('on'))closeAdmin()}});
 $('#scrim').onclick=closeAll;
 document.querySelectorAll('[data-close]').forEach(b=>b.onclick=closeAll);
@@ -665,7 +689,7 @@ function openProduct(id){const p=prod(id);if(!p)return;const q=S.cart[id]||0;con
   </div></div>`)}
 
 /* корзина */
-function openCart(){lastFocus=document.activeElement;renderCart();lock();$('#cart').classList.add('on');$('#cart').setAttribute('aria-hidden','false');setTimeout(()=>$('#cart .x').focus(),50)}
+function openCart(){lastFocus=document.activeElement;renderCart();setTimeout(hydratePhotos);lock();$('#cart').classList.add('on');$('#cart').setAttribute('aria-hidden','false');setTimeout(()=>$('#cart .x').focus(),50)}
 function renderCart(){
   const lines=cartLines();
   if(!lines.length){$('#cartBody').innerHTML=`<div class="empty" style="margin-top:20px">Корзина пуста.<br>Загляните в каталог.</div>`;$('#cartFoot').innerHTML=`<button class="btn block" data-close-go="#catalog">В каталог</button>`;return}
@@ -865,15 +889,16 @@ function renderAdmin(){
   const b=$('#adminBody'),orders=(S.allOrders||[]).slice().sort((a,b)=>b.at-a.at);
   if(S.editing){b.innerHTML=editorHtml(S.editing);bindEditor();return}
   if(S.adminTab==='products'){
-    const act=S.products.filter(p=>p.active!==false).length;
-    b.innerHTML=`<div class="kpis"><div class="kpi"><b>${S.products.length}</b><span>товаров всего</span></div><div class="kpi"><b>${act}</b><span>показываются в магазине</span></div><div class="kpi"><b>${S.products.filter(p=>p.stock!=null&&num(p.stock)<=3).length}</b><span>заканчиваются (≤ 3 шт.)</span></div></div>
-      <div class="row" style="margin-bottom:14px;align-items:center;flex-wrap:wrap"><h3 style="font-size:24px">Товары</h3><div style="display:flex;gap:8px;flex-wrap:wrap">${S.products.length?'':'<button class="btn ghost" id="seedProds">Загрузить 14 примеров</button>'}<button class="btn" id="newProd">+ Добавить товар</button></div></div>
-      ${S.products.length?`<div class="tbl-wrap"><table><thead><tr><th></th><th>Название</th><th>Категория</th><th class="num">Цена</th><th class="num">Остаток</th><th>В магазине</th><th></th></tr></thead><tbody>
-      ${S.products.slice().sort((a,b)=>num(b.created)-num(a.created)).map(p=>`<tr><td><div class="thumb" style="width:48px;height:48px">${pic(p)}</div></td><td><b>${esc(p.name)}</b>${p.label?`<br><small class="muted">${esc(p.label)}</small>`:''}</td><td>${esc(catName(p.cat))}</td><td class="num">${money(p.price)}</td>
-        <td class="num" style="${p.stock!=null&&num(p.stock)<=3?'color:var(--bad);font-weight:700':''}">${p.stock==null?'—':num(p.stock)}</td>
-        <td><label class="switch" for="sw-${p.id}" title="Показывать в магазине"><input type="checkbox" id="sw-${p.id}" data-toggle="${p.id}" ${p.active!==false?'checked':''}><span></span></label></td>
-        <td><div class="tbl-actions"><button class="btn small ghost" data-edit="${p.id}">Изменить</button><button class="btn small ghost" data-del="${p.id}" style="color:var(--bad);border-color:var(--bad)">Удалить</button></div></td></tr>`).join('')}
-      </tbody></table></div>`:`<div class="empty">Товаров пока нет. Добавьте свой или загрузите примеры, чтобы потом отредактировать.</div>`}`;
+    const act=S.products.filter(p=>p.active!==false).length,nophoto=S.products.filter(p=>!p.hasPhoto&&!p.photo&&!p.photoUrl).length;
+    b.innerHTML=`<div class="kpis"><div class="kpi"><b>${S.products.length}</b><span>товаров всего</span></div><div class="kpi"><b>${act}</b><span>показываются в магазине</span></div><div class="kpi"><b>${S.products.filter(p=>p.stock!=null&&num(p.stock)<=3).length}</b><span>заканчиваются (≤ 3 шт.)</span></div><div class="kpi"><b>${nophoto}</b><span>без фото</span></div></div>
+      <div class="row" style="margin-bottom:14px;align-items:center;flex-wrap:wrap;gap:10px"><h3 style="font-size:24px">Товары</h3><div style="display:flex;gap:8px;flex-wrap:wrap">
+        ${S.products.length?'':'<button class="btn ghost" id="seedProds">Загрузить 14 примеров</button>'}
+        <label class="btn ghost" for="kaspiFile" style="cursor:pointer">Импорт из Kaspi (Excel)</label><input type="file" id="kaspiFile" accept=".xlsx" hidden>
+        <button class="btn" id="newProd">+ Добавить товар</button></div></div>
+      <div class="toolbar"><label class="search" for="adminQ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="adminQ" type="search" placeholder="Название, бренд или SKU" value="${esc(S.aq)}" autocomplete="off"></label>
+        <select class="sel" id="adminCat" aria-label="Категория"><option value="all">Все категории</option><option value="nophoto" ${S.acat==='nophoto'?'selected':''}>Без фото</option><option value="hidden" ${S.acat==='hidden'?'selected':''}>Скрытые</option>${CATS.map(c=>`<option value="${c.id}" ${S.acat===c.id?'selected':''}>${c.name}</option>`).join('')}</select></div>
+      <div id="admTable"></div>`;
+    renderAdminTable();
   } else if(S.adminTab==='orders'){
     const nw=orders.filter(o=>o.status==='new').length,rev=orders.filter(o=>o.status!=='cancel').reduce((s,o)=>s+num(o.total),0);
     b.innerHTML=`<div class="kpis"><div class="kpi"><b>${orders.length}</b><span>заказов всего</span></div><div class="kpi"><b style="color:var(--cobalt)">${nw}</b><span>новых, ждут звонка</span></div><div class="kpi"><b class="price">${money(rev)}</b><span>сумма без отменённых</span></div></div>
@@ -893,12 +918,30 @@ function renderAdmin(){
       </tbody></table></div>`:`<div class="empty">Пока никто не зарегистрировался.</div>`}`;
   }
 }
+function renderAdminTable(){
+  const box=$('#admTable');if(!box)return;const q=S.aq.trim().toLowerCase(),PER=50;
+  let list=S.products.filter(p=>S.acat==='all'||(S.acat==='nophoto'?!p.hasPhoto&&!p.photo&&!p.photoUrl:S.acat==='hidden'?p.active===false:p.cat===S.acat))
+    .filter(p=>!q||[p.name,p.brand,p.sku].join(' ').toLowerCase().includes(q)).sort((a,b)=>num(b.created)-num(a.created));
+  const pages=Math.max(1,Math.ceil(list.length/PER));S.apage=Math.min(S.apage,pages-1);
+  if(!S.products.length){box.innerHTML=`<div class="empty">Товаров пока нет. Загрузите прайс-лист из Kaspi кнопкой «Импорт из Kaspi (Excel)» или добавьте товар вручную.</div>`;return}
+  if(!list.length){box.innerHTML=`<div class="empty">Ничего не нашлось.</div>`;return}
+  box.innerHTML=`<p class="muted" style="margin-bottom:10px;font-size:14px">Найдено: ${list.length}</p><div class="tbl-wrap"><table><thead><tr><th></th><th>Название</th><th>Категория</th><th class="num">Цена</th><th class="num">Остаток</th><th>В магазине</th><th></th></tr></thead><tbody>
+    ${list.slice(S.apage*PER,S.apage*PER+PER).map(p=>`<tr><td><div class="thumb" style="width:48px;height:48px">${pic(p)}</div></td><td><b>${esc(p.name)}</b>${p.brand||p.sku?`<br><small class="muted">${esc([p.brand,p.sku?'SKU '+p.sku:''].filter(Boolean).join(' · '))}</small>`:''}</td><td>${esc(catName(p.cat))}</td><td class="num">${money(p.price)}</td>
+      <td class="num" style="${p.stock!=null&&num(p.stock)<=3?'color:var(--bad);font-weight:700':''}">${p.stock==null?'—':num(p.stock)}</td>
+      <td><label class="switch" for="sw-${p.id}" title="Показывать в магазине"><input type="checkbox" id="sw-${p.id}" data-toggle="${p.id}" ${p.active!==false?'checked':''}><span></span></label></td>
+      <td><div class="tbl-actions"><button class="btn small ghost" data-edit="${p.id}">Изменить</button><button class="btn small ghost" data-del="${p.id}" style="color:var(--bad);border-color:var(--bad)">Удалить</button></div></td></tr>`).join('')}
+    </tbody></table></div>
+    ${pages>1?`<div style="display:flex;gap:8px;justify-content:center;align-items:center;margin-top:14px"><button class="btn small ghost" data-apage="${S.apage-1}" ${S.apage?'':'disabled'}>← Назад</button><span class="muted">Страница ${S.apage+1} из ${pages}</span><button class="btn small ghost" data-apage="${S.apage+1}" ${S.apage<pages-1?'':'disabled'}>Вперёд →</button></div>`:''}`;
+  hydratePhotos();
+}
 function editorHtml(p){const opt=(o,v)=>Object.entries(o).map(([k,n])=>`<option value="${k}" ${v===k?'selected':''}>${n}</option>`).join('');
   return `<div class="row" style="margin-bottom:16px;align-items:center"><h3 style="font-size:24px">${p.id?'Редактирование товара':'Новый товар'}</h3><button class="btn small ghost" id="edCancel">← К списку</button></div>
   <div class="editor"><form class="form" id="edForm" novalidate>
     <label class="f" for="ed-name">Название<input id="ed-name" name="name" required value="${esc(p.name||'')}" placeholder="Например: Тарелка обеденная «Гжель», 26 см"></label>
     <div class="fgrid"><label class="f" for="ed-cat">Категория<select id="ed-cat" name="cat">${CATS.map(c=>`<option value="${c.id}" ${p.cat===c.id?'selected':''}>${c.name}</option>`).join('')}</select></label>
       <label class="f" for="ed-label">Метка <span class="hint">«Хит», «Новинка»</span><input id="ed-label" name="label" value="${esc(p.label||'')}"></label></div>
+    <div class="fgrid"><label class="f" for="ed-brand">Бренд<input id="ed-brand" name="brand" value="${esc(p.brand||'')}"></label>
+      <label class="f" for="ed-sku">Артикул (SKU Kaspi)<input id="ed-sku" name="sku" value="${esc(p.sku||'')}"></label></div>
     <div class="fgrid"><label class="f" for="ed-price">Цена, ₸<input id="ed-price" name="price" inputmode="numeric" required value="${p.price??''}"></label>
       <label class="f" for="ed-old">Старая цена, ₸ <span class="hint">для скидки</span><input id="ed-old" name="oldPrice" inputmode="numeric" value="${p.oldPrice??''}"></label></div>
     <div class="fgrid"><label class="f" for="ed-stock">Остаток, шт.<input id="ed-stock" name="stock" inputmode="numeric" value="${p.stock??''}"></label>
@@ -915,30 +958,134 @@ function editorHtml(p){const opt=(o,v)=>Object.entries(o).map(([k,n])=>`<option 
   <div style="display:grid;gap:12px;align-content:start">
     <b>Как товар будет выглядеть</b>
     <div class="preview-card" id="edPrev"></div>
-    <label class="f" for="ed-photo">Фото товара <span class="hint">необязательно: JPG или PNG, уменьшим автоматически</span><input id="ed-photo" type="file" accept="image/*" style="padding-top:9px"></label>
-    <button class="btn small ghost" type="button" id="edNoPhoto" ${p.photo?'':'hidden'}>Убрать фото, оставить рисунок</button>
+    <label class="f" for="ed-photo">Загрузить фото <span class="hint">JPG или PNG, уменьшим автоматически</span><input id="ed-photo" type="file" accept="image/*" style="padding-top:9px"></label>
+    <label class="f" for="ed-purl">Или ссылка на фото <span class="hint">например, со страницы товара на Kaspi: правой кнопкой по фото → «Копировать адрес изображения»</span><input id="ed-purl" form="edForm" name="photoUrl" value="${esc(p.photoUrl||'')}" placeholder="https://…"></label>
+    <button class="btn small ghost" type="button" id="edNoPhoto" ${p.photo||p.hasPhoto||p.photoUrl?'':'hidden'}>Убрать фото, оставить рисунок</button>
   </div></div>`}
 function readEditor(){const f=$('#edForm'),d=Object.fromEntries(new FormData(f));
-  return {...S.editing,name:d.name.trim(),cat:d.cat,label:d.label.trim(),price:num(d.price,NaN),oldPrice:d.oldPrice.trim()?num(d.oldPrice):null,
+  return {...S.editing,name:d.name.trim(),cat:d.cat,label:d.label.trim(),brand:d.brand.trim(),sku:d.sku.trim(),photoUrl:String(d.photoUrl||'').trim(),price:num(d.price,NaN),oldPrice:d.oldPrice.trim()?num(d.oldPrice):null,
     stock:d.stock.trim()?Math.max(0,Math.round(num(d.stock))):null,size:d.size.trim(),material:d.material.trim(),desc:d.desc.trim(),shape:d.shape,color:d.color,pattern:d.pattern,active:f.active.checked}}
 function bindEditor(){
   const prev=()=>{$('#edPrev').innerHTML=pic(readEditor())};prev();
-  $('#edForm').addEventListener('input',prev);
+  $('#edForm').addEventListener('input',prev);$('#ed-purl').addEventListener('input',prev);
   const back=()=>{S.editing=null;renderAdmin()};$('#edCancel').onclick=back;$('#edCancel2').onclick=back;
-  $('#edNoPhoto').onclick=()=>{S.editing={...readEditor(),photo:null};renderAdmin()};
+  $('#edNoPhoto').onclick=()=>{S.editing={...readEditor(),photo:null,photoUrl:'',hasPhoto:false,_removePhoto:true};renderAdmin()};
   $('#ed-photo').onchange=e=>{const file=e.target.files[0];if(!file)return;const img=new Image(),url=URL.createObjectURL(file);
     img.onload=()=>{const m=640,k=Math.min(1,m/Math.max(img.width,img.height)),c=document.createElement('canvas');c.width=img.width*k;c.height=img.height*k;
-      c.getContext('2d').drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(url);S.editing={...readEditor(),photo:c.toDataURL('image/jpeg',.78)};renderAdmin()};
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(url);S.editing={...readEditor(),photo:c.toDataURL('image/jpeg',.78),_removePhoto:false};renderAdmin()};
     img.onerror=()=>{$('#ed-err').textContent='Не получилось открыть файл. Выберите JPG или PNG.'};img.src=url};
   $('#edForm').onsubmit=async e=>{e.preventDefault();const p=readEditor();
     if(!p.name){$('#ed-err').textContent='Введите название товара.';return}
     if(!isFinite(p.price)||p.price<=0){$('#ed-err').textContent='Укажите цену больше нуля.';return}
     const btn=e.target.querySelector('button[type=submit]');btn.disabled=true;
-    const {id,...data}=p;data.photo=data.photo||null;data.created=data.created||Date.now();
-    try{if(id)await B.setProduct(id,data);else await B.addProduct(data);S.editing=null;toast(id?'Изменения сохранены':'Товар добавлен в каталог');renderAdmin()}
+    const {id,photo,_removePhoto,...data}=p;data.created=data.created||Date.now();
+    if(photo)data.hasPhoto=true;if(_removePhoto&&!photo)data.hasPhoto=false;delete data.photo;
+    for(const k in data)if(data[k]===undefined)delete data[k];
+    try{const pid=id?(await B.setProduct(id,data),id):await B.addProduct(data);
+      if(photo){await B.setPhoto(pid,photo);photoCache.set(pid,photo)}else if(_removePhoto){B.deletePhoto(pid).catch(()=>{});photoCache.delete(pid)}
+      S.editing=null;toast(id?'Изменения сохранены':'Товар добавлен в каталог');renderAdmin()}
     catch(err){btn.disabled=false;$('#ed-err').textContent=err?.code==='permission-denied'?'Нет прав администратора. Проверьте, что почта подтверждена.':'Не удалось сохранить. Если загружено фото, попробуйте снимок поменьше.'}};
 }
 function confirmDelete(id){const p=prod(id);openModal('Удалить товар?',`<p>«${esc(p.name)}» исчезнет из каталога. Это нельзя отменить.</p><div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap"><button class="btn danger" id="doDel" data-id="${id}">Удалить</button><button class="btn ghost" data-close-btn>Отмена</button></div>`,true)}
+
+
+/* ===================== импорт прайс-листа Kaspi (Excel) ===================== */
+// Читает .xlsx прямо в браузере (без библиотек). Файл никуда не отправляется, кроме вашей базы Firebase.
+async function readXlsx(file){
+  const buf=new Uint8Array(await file.arrayBuffer()),dv=new DataView(buf.buffer);
+  let e=buf.length-22;while(e>=0&&dv.getUint32(e,true)!==0x06054b50)e--;
+  if(e<0)throw new Error('Это не файл Excel (.xlsx).');
+  const n=dv.getUint16(e+10,true);let q=dv.getUint32(e+16,true);const files={};
+  for(let i=0;i<n;i++){const method=dv.getUint16(q+10,true),csize=dv.getUint32(q+20,true),nl=dv.getUint16(q+28,true),xl=dv.getUint16(q+30,true),cl=dv.getUint16(q+32,true),off=dv.getUint32(q+42,true);
+    files[new TextDecoder().decode(buf.subarray(q+46,q+46+nl))]={method,csize,off};q+=46+nl+xl+cl}
+  async function read(name){const f=files[name];if(!f)return null;const st=f.off+30+dv.getUint16(f.off+26,true)+dv.getUint16(f.off+28,true);const data=buf.subarray(st,st+f.csize);
+    if(f.method===0)return new TextDecoder().decode(data);
+    return await new Response(new Blob([data]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).text()}
+  const xml=t=>new DOMParser().parseFromString(t,'application/xml');
+  const ss=[];const sst=await read('xl/sharedStrings.xml');if(sst)for(const si of xml(sst).getElementsByTagName('si'))ss.push(si.textContent);
+  let sheet='xl/worksheets/sheet1.xml';
+  try{const first=xml(await read('xl/workbook.xml')).getElementsByTagName('sheet')[0];const rid=first.getAttribute('r:id');
+    for(const r of xml(await read('xl/_rels/workbook.xml.rels')).getElementsByTagName('Relationship'))if(r.getAttribute('Id')===rid){const t=r.getAttribute('Target');sheet=t.startsWith('/')?t.slice(1):'xl/'+t.replace(/^\.\//,'')}}catch(err){}
+  const sx=await read(sheet);if(!sx)throw new Error('В файле не найден лист с товарами.');
+  const rows=[];
+  for(const row of xml(sx).getElementsByTagName('row')){const r=[];
+    for(const c of row.getElementsByTagName('c')){const ref=(c.getAttribute('r')||'').replace(/\d+/g,'');const col=ref?ref.split('').reduce((a,ch)=>a*26+ch.charCodeAt(0)-64,0)-1:r.length;
+      const t=c.getAttribute('t'),v=c.getElementsByTagName('v')[0];r[col]=t==='s'?ss[+(v?.textContent)]:t==='inlineStr'?c.textContent:(v?v.textContent:'')}
+    rows.push(r)}
+  return rows}
+
+const CAT_RULES=[
+ ['light',/люстр|подвес|светильник|ламп|(^|[\s,])бра([\s,]|$)|торшер|плафон|[eе]14|[eе]27|крепеж|крепёж|гирлянд|канделябр|выключател|розетк/],
+ ['appliances',/мантоварк|вафельниц|электрочайник|электрическ|пароварк|мультивар|блендер|миксер|мясоруб|тостер|кофевар|кофемашин|термопот|электро/],
+ ['cutlery',/прибор|ложк|ложек|вилк|вилок|(^|[\s,])нож([\s,]|$|ей|и(?!ц))|лезвие|палочк/],
+ ['cookware',/кастрюл|сковород|казан|ковш|сотейник|жаровн|блинная|(^|[\s,])вок([\s,]|$)|гусятниц|утятниц|противень|гриль/],
+ ['teapots',/(?<!термо)чайник|заварочн|френч-пресс|турк|кофейник|самовар/],
+ ['glass',/бокал|стакан|стопк|стопок|рюм|фужер|графин|(?<!термо)кувшин|штоф|виски/],
+ ['cups',/круж|чашк|чашек|чайн[а-яё]* пар|кофейн[а-яё]* пар/],
+ ['sets',/сервиз/],
+ ['plates',/тарел/],
+ ['bowls',/пиал|салатник|миск|супниц|бульонниц|кокотниц/],
+ ['serving',/блюд|поднос|ваз[аыуе]|конфетниц|менажниц|сахарниц|молочник|креманк|этажерк|фруктовниц|масленк|соусник|сервировочн|селедочниц|тортниц|тортовниц|хлебниц|подставк|салфетниц|икорниц|дозатор|астау/],
+ ['kitchen',/контейнер|крышк|термос|термокувшин|термобутыл|шумовк|форм[аы]|разделочн|доск|банк[аи]|половник|поварёшк|поварешк|лопатк|т[её]рк|сито|ситечк|дуршлаг|салфет|влажн|мельниц|специ|скалк|венчик|прихватк|фартук|полотенц|сушилк|органайзер|ведро|лоток|ножниц|овощерез|овощечист|картофелемял|кисть кулинар|ланч-бокс|губк|консервн|шампур|кухонн|втулк|тэн|ручка для/],
+ ['sets',/набор/]
+];
+const classify=name=>{const t=' '+String(name).toLowerCase()+' ';for(const [c,re] of CAT_RULES)if(re.test(t))return c;return 'other'};
+const MATERIALS=[['костяной фарфор','Костяной фарфор'],['фарфор','Фарфор'],['керамик','Керамика'],['хрустал','Хрусталь'],['жаропрочное стекло','Жаропрочное стекло'],['стекло','Стекло'],['нержавеющая сталь','Нержавеющая сталь'],['нерж','Нержавеющая сталь'],['мельхиор','Мельхиор'],['чугун','Чугун'],['мраморн','Мраморное покрытие'],['гранит','Гранитное покрытие'],['алюмини','Алюминий'],['бамбук','Бамбук'],['дерев','Дерево'],['силикон','Силикон'],['пластик','Пластик'],['сталь','Сталь'],['металл','Металл']];
+const materialOf=n=>{const t=n.toLowerCase(),out=[];for(const [k,v] of MATERIALS)if(t.includes(k)&&!out.includes(v)&&!(v==='Сталь'&&out.includes('Нержавеющая сталь'))&&!(v==='Фарфор'&&out.includes('Костяной фарфор'))&&!(v==='Стекло'&&(out.includes('Жаропрочное стекло')))){out.push(v);if(out.length===2)break}return out.join(', ')};
+const brandName=b=>{b=String(b||'').trim();if(!b||/без бренда/i.test(b))return '';b=b.split('-')[0];return b.charAt(0).toUpperCase()+b.slice(1)};
+function looksOf(cat,n){const t=n.toLowerCase(),gold=/золот/.test(t),shape=(CATS.find(c=>c.id===cat)||{}).shape||'plate';
+  let color='#FFFFFF',pattern='rim';
+  if(cat==='cutlery')color=gold?'#C9A45C':'#D8DCE2',pattern='none';
+  else if(cat==='cookware'||cat==='appliances'){color=/чугун|мрамор|гранит|антипригар|черн|чёрн/.test(t)?'#2B2E33':'#D8DCE2';pattern='none'}
+  else if(cat==='glass'){pattern='none'}
+  else if(cat==='light'){color='#C9A45C'}
+  else if(cat==='other'){color='#141414'}
+  else if(/черн|чёрн/.test(t))color='#141414';
+  else if(!gold&&/цвет|роз|узор/.test(t))pattern='gzhel';
+  if(cat==='cups'&&/кружк/.test(t))return {shape:'mug',color,pattern};
+  if(cat==='cookware'&&/сковород|блинная|вок/.test(t))return {shape:'pan',color,pattern};
+  if(cat==='glass'&&/стакан|стопк/.test(t))return {shape:'tumbler',color,pattern};
+  return {shape,color,pattern}}
+function kaspiItems(rows){
+  const hi=rows.findIndex(r=>r&&r.some(c=>String(c||'').trim().toLowerCase()==='sku'));
+  if(hi<0)throw new Error('Не нашёл колонку SKU. Выгрузите прайс-лист в Excel из кабинета Kaspi.');
+  const H=rows[hi].map(c=>String(c||'').trim().toLowerCase().replace(/\s/g,''));
+  const col=k=>H.indexOf(k),iS=col('sku'),iM=col('model'),iB=col('brand'),iP=col('price'),iPP=H.map((h,i)=>/^pp\d+$/.test(h)?i:-1).filter(i=>i>=0);
+  const now=Date.now(),out=[];
+  rows.slice(hi+1).forEach((r,idx)=>{if(!r)return;const sku=String(r[iS]??'').trim();if(!sku)return;
+    const raw=String(r[iM]??'').trim(),name=raw||('Товар '+sku);
+    const stock=iPP.reduce((a,i)=>{const v=parseFloat(r[i]);return a+(isFinite(v)?v:0)},0);
+    const cat=classify(name);
+    out.push({id:'k'+sku.replace(/[^A-Za-z0-9_-]/g,'_'),sku,name,brand:brandName(r[iB]),price:Math.round(num(r[iP])),stock,cat,material:materialOf(name),...looksOf(cat,name),
+      active:!!raw&&num(r[iP])>0,source:'kaspi',created:now-idx,sold:0,label:'',desc:''})});
+  return out}
+async function startImport(file){
+  let items;try{items=kaspiItems(await readXlsx(file))}catch(e){toast(e.message||'Не удалось прочитать файл');return}
+  if(!items.length){toast('В файле не нашлось товаров');return}
+  const have=new Map(S.products.map(p=>[p.id,p]));
+  const fresh=items.filter(i=>!have.has(i.id)),upd=[];
+  items.forEach(i=>{const p=have.get(i.id);if(!p)return;const ch={};if(num(p.price)!==i.price)ch.price=i.price;if(num(p.stock)!==i.stock)ch.stock=i.stock;if(Object.keys(ch).length)upd.push([i.id,ch])});
+  const fileIds=new Set(items.map(i=>i.id)),gone=S.products.filter(p=>p.source==='kaspi'&&!fileIds.has(p.id)).length;
+  const byCat={};fresh.forEach(i=>byCat[i.cat]=(byCat[i.cat]||0)+1);
+  const unnamed=fresh.filter(i=>!i.active).length;
+  S.importPlan={fresh,upd};
+  openModal('Импорт из Kaspi',`<div style="display:grid;gap:14px">
+    <div class="kpis" style="margin:0"><div class="kpi"><b>${items.length}</b><span>товаров в файле</span></div><div class="kpi"><b style="color:var(--cobalt)">${fresh.length}</b><span>новых, добавятся</span></div><div class="kpi"><b>${upd.length}</b><span>уже есть, изменились цена или остаток</span></div></div>
+    ${fresh.length?`<div><b>Новые товары по категориям</b><div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">${CATS.filter(c=>byCat[c.id]).map(c=>`<span class="chip" style="cursor:default">${c.name}: ${byCat[c.id]}</span>`).join('')}</div>
+      <p class="hint" style="margin-top:8px">Категории подобраны по названию. Любую можно поменять потом в карточке товара.</p></div>`:''}
+    ${upd.length?`<label class="opt" for="impUpd"><input type="checkbox" id="impUpd" checked><span><b>Обновить цены и остатки (${upd.length})</b><small>Названия, фото и описания, которые вы меняли на сайте, не тронем</small></span></label>`:''}
+    <div class="note">В прайс-листе Kaspi нет фото и описаний. У товаров будут аккуратные рисунки, а фото можно добавить в карточке товара.${unnamed?` ${unnamed} ${plural(unnamed,'товар','товара','товаров')} без названия или цены будут скрыты, пока вы их не заполните.`:''}${gone?` На сайте есть ${gone} ${plural(gone,'товар','товара','товаров')} с Kaspi, которых нет в этом файле: их не удаляем.`:''}</div>
+    <p class="hint">Импорт только добавляет товары на сайт. Магазин на Kaspi не меняется.</p>
+    <div class="err" id="imp-err"></div>
+    <button class="btn block" id="doImport" ${fresh.length||upd.length?'':'disabled'}>${fresh.length?`Добавить ${fresh.length} ${plural(fresh.length,'товар','товара','товаров')}`:'Обновить цены и остатки'}</button></div>`,true);
+}
+async function runImport(btn){
+  const plan=S.importPlan;if(!plan)return;const doUpd=$('#impUpd')?$('#impUpd').checked:false;
+  btn.disabled=true;btn.textContent='Загружаем…';
+  try{await B.importItems(plan.fresh,doUpd?Object.fromEntries(plan.upd):{},(i,n)=>{btn.textContent=`Загружаем… ${Math.round(i/n*100)}%`});
+    S.importPlan=null;closeAll();document.body.classList.add('locked');toast(`Готово: добавлено ${plan.fresh.length}${doUpd&&plan.upd.length?`, обновлено ${plan.upd.length}`:''}`)}
+  catch(e){btn.disabled=false;btn.textContent='Попробовать ещё раз';$('#imp-err').textContent=e?.code==='permission-denied'?'Нет прав администратора. Проверьте, что почта подтверждена и правила базы обновлены.':'Не удалось загрузить: '+(e?.message||'ошибка сети')}
+}
 
 /* ===================== события ===================== */
 document.addEventListener('click',async e=>{
@@ -949,8 +1096,9 @@ document.addEventListener('click',async e=>{
   else if(d.dec){setQty(d.dec,(S.cart[d.dec]||0)-1)}
   else if(d.rm){setQty(d.rm,0)}
   else if(d.open){openProduct(d.open)}
-  else if(d.cat){S.cat=d.cat;renderCats();renderGrid();$('#catalog').scrollIntoView()}
-  else if(d.chip){S.cat=d.chip;renderCats();renderGrid()}
+  else if(t.id==='showMore'){S.limit+=24;renderGrid();hydratePhotos()}
+  else if(d.cat){S.cat=d.cat;S.limit=24;renderCats();renderGrid();hydratePhotos();$('#catalog').scrollIntoView()}
+  else if(d.chip){S.cat=d.chip;S.limit=24;renderCats();renderGrid();hydratePhotos()}
   else if(d.auth){const keep=S.afterLogin;openAccount(d.auth);S.afterLogin=keep}
   else if(d.closeGo){closeAll();document.querySelector(d.closeGo).scrollIntoView()}
   else if('closeBtn' in d){closeAll();if($('#admin').classList.contains('on'))document.body.classList.add('locked')}
@@ -962,6 +1110,8 @@ document.addEventListener('click',async e=>{
   else if(t.id==='recheck'){await B.reloadUser();openAccount();toast(S.owner?'Готово: админ-панель включена':'Почта ещё не подтверждена')}
   else if(d.tab){S.adminTab=d.tab;S.editing=null;renderAdmin()}
   else if(t.id==='newProd'){S.editing={cat:S.cat!=='all'?S.cat:'plates',shape:'plate',color:'#FFFFFF',pattern:'gzhel',active:true};renderAdmin()}
+  else if(d.apage!==undefined){S.apage=+d.apage;renderAdminTable();$('#admTable').scrollIntoView({block:'start'})}
+  else if(t.id==='doImport'){runImport(t)}
   else if(t.id==='seedProds'){t.disabled=true;try{await B.seed(SEED);toast('Примеры загружены')}catch(err){t.disabled=false;toast('Не удалось загрузить')}}
   else if(d.edit){S.editing={...prod(d.edit)};renderAdmin()}
   else if(d.del){confirmDelete(d.del)}
@@ -970,12 +1120,14 @@ document.addEventListener('click',async e=>{
 });
 document.addEventListener('change',async e=>{
   const t=e.target;
+  if(t.id==='adminCat'){S.acat=t.value;S.apage=0;renderAdminTable()}
+  if(t.id==='kaspiFile'&&t.files[0]){startImport(t.files[0]);t.value=''}
   if(t.name==='ship'){if(t.value==='kz')S.kzManual=true;if(t.value==='courier')S.kzManual=false;updateCoSum()}
   if(t.id==='co-city'){S.kzManual=false;updateCoSum()}
   if(t.dataset.toggle){try{await B.updateProduct(t.dataset.toggle,{active:t.checked});toast(t.checked?'Товар показан в магазине':'Товар скрыт от покупателей')}catch(err){t.checked=!t.checked;toast('Не удалось изменить')}}
   if(t.dataset.status){try{await B.setOrderStatus(t.dataset.status,t.value);toast('Статус: '+STATUS[t.value][0])}catch(err){toast('Не удалось изменить статус')}}
 });
-document.addEventListener('input',e=>{if(e.target.id==='co-street'){clearTimeout(sugT);const v=e.target.value.trim();sugT=setTimeout(()=>suggest(v),350)}});
+document.addEventListener('input',e=>{if(e.target.id==='adminQ'){S.aq=e.target.value;S.apage=0;renderAdminTable()}if(e.target.id==='co-street'){clearTimeout(sugT);const v=e.target.value.trim();sugT=setTimeout(()=>suggest(v),350)}});
 document.addEventListener('keydown',e=>{if(e.target.id!=='co-street')return;const box=$('#addrSug');if(!box||box.hidden||!sugList.length)return;
   if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();sugIdx=(sugIdx+(e.key==='ArrowDown'?1:-1)+sugList.length)%sugList.length;box.querySelectorAll('.sug').forEach((b,i)=>b.classList.toggle('on',i===sugIdx));e.target.setAttribute('aria-activedescendant','sug-'+sugIdx)}
   else if(e.key==='Enter'&&sugIdx>=0){e.preventDefault();pickSug(sugIdx)}else if(e.key==='Escape'){e.stopPropagation();box.hidden=true}});
@@ -994,8 +1146,8 @@ $('#accountBtn').onclick=()=>openAccount();
 $('#adminBtn').onclick=openAdmin;
 $('#adminClose').onclick=closeAdmin;
 $('#burger').onclick=()=>{const o=$('#menu').classList.toggle('open');$('#burger').setAttribute('aria-expanded',o)};
-let qt;$('#q').addEventListener('input',e=>{clearTimeout(qt);qt=setTimeout(()=>{S.q=e.target.value;renderGrid()},150)});
-$('#sort').onchange=e=>{S.sort=e.target.value;renderGrid()};
+let qt;$('#q').addEventListener('input',e=>{clearTimeout(qt);qt=setTimeout(()=>{S.q=e.target.value;S.limit=24;renderGrid();hydratePhotos()},150)});
+$('#sort').onchange=e=>{S.sort=e.target.value;S.limit=24;renderGrid();hydratePhotos()};
 
 /* ===================== серверная часть ===================== */
 // Демо-режим: пока не вставлены настройки Firebase, всё хранится только в этом браузере.
@@ -1019,11 +1171,15 @@ function demoBackend(){
     async signOut(){st.session=null;emit('auth')},
     async reset(){},async resendVerify(){},async reloadUser(){emit('auth')},
     watchProducts:f=>watch('products',()=>f(list('products'))),
-    async addProduct(d){st.products['p'+id()]=d;emit('products')},
+    async addProduct(d){const i='p'+id();st.products[i]=d;emit('products');return i},
     async setProduct(i,d){st.products[i]=d;emit('products')},
     async updateProduct(i,p){st.products[i]={...st.products[i],...p};emit('products')},
     async deleteProduct(i){delete st.products[i];emit('products')},
     async seed(arr){arr.forEach(p=>st.products['p'+id()]={...p});emit('products')},
+    async importItems(fresh,upd,prog){fresh.forEach(({id:i,...d})=>st.products[i]=d);for(const [i,p] of Object.entries(upd))if(st.products[i])st.products[i]={...st.products[i],...p};prog&&prog(1,1);emit('products')},
+    async getPhoto(i){return (st.photos||{})[i]||null},
+    async setPhoto(i,d){st.photos=st.photos||{};st.photos[i]=d;save()},
+    async deletePhoto(i){if(st.photos)delete st.photos[i];save()},
     watchProfile:(uid,f)=>watch('users',()=>f(st.users[uid]||null)),
     async saveProfile(uid,profile){st.users[uid]={...(st.users[uid]||{}),profile,updated:Date.now()};emit('users')},
     async saveAddress(uid,addr){st.users[uid]={...(st.users[uid]||{}),addr};emit('users')},
@@ -1039,6 +1195,9 @@ async function firebaseBackend(cfg){
   const [A,AU,F]=await Promise.all([import(base+'firebase-app.js'),import(base+'firebase-auth.js'),import(base+'firebase-firestore.js')]);
   const app=A.initializeApp(cfg),auth=AU.getAuth(app),db=F.getFirestore(app);
   const rows=s=>s.docs.map(d=>({id:d.id,...d.data()}));
+  const CH=300;let chunkOf={},chunkSize={};
+  const rid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+  const pick=k=>{for(const [c,n] of Object.entries(chunkSize))if(n+k<=CH){chunkSize[c]=n+k;return c}let i=0;while(chunkSize['c'+i]!=null)i++;chunkSize['c'+i]=k;return 'c'+i};
   let authCb=null;const fire=()=>authCb&&authCb(auth.currentUser?{uid:auth.currentUser.uid,email:auth.currentUser.email,emailVerified:auth.currentUser.emailVerified}:null);
   return {
     demo:false,
@@ -1049,12 +1208,21 @@ async function firebaseBackend(cfg){
     reset:e=>AU.sendPasswordResetEmail(auth,e),
     resendVerify:()=>AU.sendEmailVerification(auth.currentUser),
     async reloadUser(){await auth.currentUser?.reload();await auth.currentUser?.getIdToken(true);fire()},
-    watchProducts:(f,err)=>F.onSnapshot(F.collection(db,'products'),s=>f(rows(s)),err),
-    addProduct:d=>F.addDoc(F.collection(db,'products'),d),
-    setProduct:(i,d)=>F.setDoc(F.doc(db,'products',i),d),
-    updateProduct:(i,p)=>F.updateDoc(F.doc(db,'products',i),p),
-    deleteProduct:i=>F.deleteDoc(F.doc(db,'products',i)),
-    async seed(arr){const b=F.writeBatch(db);arr.forEach(p=>b.set(F.doc(F.collection(db,'products')),p));await b.commit()},
+    // Каталог хранится пачками до 300 товаров в документах catalog/c0, c1… — посетитель читает 3–5 документов, а не тысячу.
+    watchProducts:(f,err)=>F.onSnapshot(F.collection(db,'catalog'),snap=>{chunkOf={};chunkSize={};const out=[];
+      snap.docs.forEach(d=>{const it=d.data().items||{};chunkSize[d.id]=Object.keys(it).length;for(const [i,v] of Object.entries(it)){chunkOf[i]=d.id;out.push({id:i,...v})}});f(out)},err),
+    async addProduct(d){const i='p'+rid();const c=pick(1);chunkOf[i]=c;await F.setDoc(F.doc(db,'catalog',c),{items:{[i]:d}},{merge:true});return i},
+    setProduct:(i,d)=>F.updateDoc(F.doc(db,'catalog',chunkOf[i]),new F.FieldPath('items',i),d),
+    updateProduct:(i,p)=>{const args=[];for(const [k,v] of Object.entries(p))args.push(new F.FieldPath('items',i,k),v);return F.updateDoc(F.doc(db,'catalog',chunkOf[i]),...args)},
+    async deleteProduct(i){await F.updateDoc(F.doc(db,'catalog',chunkOf[i]),new F.FieldPath('items',i),F.deleteField());F.deleteDoc(F.doc(db,'photos',i)).catch(()=>{})},
+    async importItems(fresh,upd,prog){const per={};
+      fresh.forEach(({id:i,...d})=>{const c=chunkOf[i]||pick(1);chunkOf[i]=c;(per[c]=per[c]||{})[i]=d});
+      for(const [i,p] of Object.entries(upd)){const c=chunkOf[i];if(!c)continue;(per[c]=per[c]||{})[i]={...(per[c][i]||{}),...p}}
+      const keys=Object.keys(per);let n=0;for(const c of keys){await F.setDoc(F.doc(db,'catalog',c),{items:per[c]},{merge:true});prog&&prog(++n,keys.length)}},
+    seed(arr){return this.importItems(arr.map(p=>({id:'p'+rid(),...p})),{})},
+    async getPhoto(i){const d=await F.getDoc(F.doc(db,'photos',i));return d.exists()?d.data().data:null},
+    setPhoto:(i,data)=>F.setDoc(F.doc(db,'photos',i),{data}),
+    deletePhoto:i=>F.deleteDoc(F.doc(db,'photos',i)),
     watchProfile:(uid,f)=>F.onSnapshot(F.doc(db,'users',uid),s=>f(s.exists()?s.data():null),()=>f(null)),
     saveProfile:(uid,profile)=>F.setDoc(F.doc(db,'users',uid),{profile,updated:Date.now()},{merge:true}),
     saveAddress:(uid,addr)=>F.setDoc(F.doc(db,'users',uid),{addr},{merge:true}),
@@ -1067,7 +1235,7 @@ async function firebaseBackend(cfg){
 }
 
 /* ===================== запуск ===================== */
-let B;
+var B;
 loadCart();renderInfo();renderAll();
 (async function boot(){
   const configured=FIREBASE_CONFIG.apiKey&&!FIREBASE_CONFIG.apiKey.startsWith('ВСТАВЬТЕ');
