@@ -7,7 +7,8 @@
 import crypto from 'node:crypto';
 
 export const PROJECT = 'divior-store';
-export const SITE = 'https://splendid-pothos-40c027.netlify.app';
+export const SITE = (process.env.URL || 'https://splendid-pothos-40c027.netlify.app').replace(/\/$/, '');
+export const API_KEY = 'AIzaSyBQBvoYIJoPgVj6LIoODUX-LlkLs0QUnDs'; // публичный ключ веб-приложения Firebase (не секрет)
 const FS = `https://firestore.googleapis.com/v1/projects/${PROJECT}/databases/(default)/documents`;
 
 export const esc = s => String(s ?? '').replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
@@ -89,9 +90,55 @@ export async function fsQuery(collectionId, { where, orderBy, desc = true, limit
   return res.filter(x => x.document).map(x => docOut(x.document));
 }
 
+// Пакетная запись (атомарно): создание заказа + списание остатков одним запросом.
+export const DOC = p => `projects/${PROJECT}/databases/(default)/documents/${p}`;
+export const fsCommit = writes => fs(':commit', { method: 'POST', body: JSON.stringify({ writes }) });
+// Все документы коллекции (для каталога: catalog/c0, c1…).
+export async function fsList(col, { auth = true } = {}) {
+  let out = [], page = '';
+  do {
+    const url = `/${col}?pageSize=100${page ? '&pageToken=' + page : ''}`;
+    const j = auth ? await fs(url) : await (await fetch(FS + url)).json();
+    out = out.concat((j.documents || []).map(docOut)); page = j.nextPageToken || '';
+  } while (page);
+  return out;
+}
+// Каталог одним объектом {id: товар}, с кэшем на минуту (читается без ключа — каталог публичный).
+let catCache = { at: 0, map: null, chunk: null };
+export async function catalog(fresh = false) {
+  if (!fresh && catCache.map && Date.now() - catCache.at < 60000) return catCache;
+  const docs = await fsList('catalog', { auth: false });
+  const map = {}, chunk = {};
+  for (const d of docs) for (const [id, p] of Object.entries(d.items || {})) { map[id] = { id, ...p }; chunk[id] = d.id; }
+  catCache = { at: Date.now(), map, chunk };
+  return catCache;
+}
+// Проверка входа покупателя: Google сам проверяет токен и возвращает пользователя.
+export async function verifyUser(idToken) {
+  if (!idToken || typeof idToken !== 'string' || idToken.length > 4000) return null;
+  const r = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${API_KEY}`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ idToken })
+  });
+  const j = await r.json().catch(() => ({}));
+  const u = j.users && j.users[0];
+  return u ? { uid: u.localId, email: u.email || '', emailVerified: !!u.emailVerified, disabled: !!u.disabled } : null;
+}
+// Ограничение частоты: не больше max событий за windowMs по ключу (IP, пользователь, чат).
+export async function rateLimit(key, max, windowMs) {
+  const id = 'rl_' + crypto.createHash('sha256').update(key).digest('hex').slice(0, 32);
+  const now = Date.now();
+  let d = null; try { d = await fsGet('limits/' + id); } catch { }
+  const hits = (d?.hits || []).filter(t => now - t < windowMs);
+  if (hits.length >= max) return false;
+  hits.push(now);
+  await fsPatch('limits/' + id, { hits, until: now + windowMs }).catch(() => { });
+  return true;
+}
+export const clientIp = req => (req.headers.get('x-nf-client-connection-ip') || req.headers.get('x-forwarded-for') || '').split(',')[0].trim() || 'unknown';
+
 // ---------- Заказы ----------
-export const STATUS = { new: 'Новый', paid: 'Оплачен', ship: 'В доставке', done: 'Выполнен', cancel: 'Отменён' };
-export const STATUS_ICON = { new: '🆕', paid: '💳', ship: '🚚', done: '✅', cancel: '❌' };
+export const STATUS = { new: 'Новый', wait: 'Ждёт оплаты', paid: 'Оплачен', ship: 'В доставке', done: 'Выполнен', cancel: 'Отменён' };
+export const STATUS_ICON = { new: '🆕', wait: '⏳', paid: '💳', ship: '🚚', done: '✅', cancel: '❌' };
 export function orderText(o, id) {
   const items = (o.items || []).map(i => `• ${esc(i.name)} × ${i.q} — ${money(i.price * i.q)}`).join('\n');
   return `🛍 <b>Заказ ${esc(o.num || id)}</b>  ${STATUS_ICON[o.status] || ''} ${STATUS[o.status] || ''}\n\n` +
@@ -102,8 +149,25 @@ export function orderText(o, id) {
 }
 export function orderKeyboard(id, status, phone) {
   const b = (st, label) => ({ text: (status === st ? '• ' : '') + label, callback_data: `st:${id}:${st}` });
-  const rows = [[b('paid', '💳 Оплачен'), b('ship', '🚚 В доставке')], [b('done', '✅ Выполнен'), b('cancel', '❌ Отменить')]];
+  const rows = [[b('wait', '⏳ Ждёт оплаты'), b('paid', '💳 Оплачен')], [b('ship', '🚚 В доставке'), b('done', '✅ Выполнен')], [b('cancel', '❌ Отменить')]];
   const p = String(phone || '').replace(/\D/g, '');
   if (p.length >= 10) rows.push([{ text: '💬 Написать в WhatsApp', url: 'https://wa.me/' + p }]);
   return { inline_keyboard: rows };
+}
+
+// Смена статуса заказа. При отмене товар возвращается на остаток, при «отмене отмены» — снова списывается.
+export async function setOrderStatus(id, st) {
+  const o = await fsGet('orders/' + id);
+  if (!o) throw new Error('Заказ не найден');
+  const back = st === 'cancel' && o.stockTaken && !o.restocked;
+  const again = st !== 'cancel' && o.restocked;
+  const writes = [{ update: { name: DOC('orders/' + id), fields: toFs({ status: st, restocked: back ? true : again ? false : !!o.restocked }).mapValue.fields }, updateMask: { fieldPaths: ['status', 'restocked'] } }];
+  if (back || again) {
+    const { map, chunk } = await catalog(true), per = {};
+    for (const i of o.items || []) { const p = map[i.pid]; if (p && p.stock != null) (per[chunk[i.pid]] = per[chunk[i.pid]] || []).push(i); }
+    for (const [c, list] of Object.entries(per)) writes.push({ transform: { document: DOC('catalog/' + c),
+      fieldTransforms: list.map(i => ({ fieldPath: 'items.`' + i.pid + '`.stock', increment: { integerValue: String(back ? i.q : -i.q) } })) } });
+  }
+  await fsCommit(writes);
+  return { ...o, status: st };
 }

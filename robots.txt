@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /.netlify/
+
+Sitemap: https://splendid-pothos-40c027.netlify.app/sitemap.xml

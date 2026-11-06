@@ -1,12 +1,13 @@
 // Уведомления с сайта в Telegram-бот администратора.
 import { PROJECT, esc, sendAdmins, orderText, orderKeyboard } from '../lib/core.mjs';
 const FS = `https://firestore.googleapis.com/v1/projects/${PROJECT}/databases/(default)/documents`;
-import { fromFs } from '../lib/core.mjs';
+import { fromFs, rateLimit, clientIp, verifyUser, hasServiceAccount } from '../lib/core.mjs';
 
 export default async (req) => {
   if (req.method !== 'POST') return new Response('Divior notify: ok');
   let body; try { body = await req.json(); } catch { return new Response('bad json', { status: 400 }); }
 
+  // Заказы теперь создаёт и присылает в Telegram функция order.mjs; этот блок оставлен для старых вкладок.
   if (body.type === 'order') {
     // Заказ проверяем, читая его токеном самого покупателя: подделать уведомление нельзя.
     if (!/^[A-Za-z0-9]{10,40}$/.test(body.orderId || '') || !body.idToken) return new Response('bad', { status: 400 });
@@ -21,11 +22,18 @@ export default async (req) => {
     if (!/^[a-z0-9]{12,40}$/.test(body.cid || '')) return new Response('bad', { status: 400 });
     const r = await fetch(`${FS}/chats/${body.cid}`);
     if (!r.ok) return new Response('chat not found', { status: 403 });
+    // Защита от спама: не больше 20 сообщений в час из одного чата и 40 с одного IP.
+    if (hasServiceAccount() && (!await rateLimit('chat:' + body.cid, 20, 3600e3) || !await rateLimit('chat-ip:' + clientIp(req), 40, 3600e3)))
+      return Response.json({ ok: false, reason: 'rate' }, { status: 429 });
     const name = String(body.name || '').slice(0, 80), phone = String(body.phone || '').slice(0, 40), text = String(body.text || '').slice(0, 1500);
     return Response.json(await sendAdmins(
       `💬 <b>${esc(name || 'Покупатель')}</b>${phone ? ', ' + esc(phone) : ''}\n\n${esc(text)}\n\n<i>Ответьте на это сообщение (свайп или «Ответить») — покупатель увидит ответ в чате на сайте.</i>\n#c${body.cid}`));
   }
 
+  if (body.type === 'test') {
+    const u = await verifyUser(body.idToken);
+    if (!u || u.email.toLowerCase() !== 'ryabovdima112@gmail.com') return new Response('forbidden', { status: 403 });
+  }
   if (body.type === 'test') return Response.json(await sendAdmins('✅ Уведомления с сайта Divior работают.'));
   return new Response('unknown', { status: 400 });
 };

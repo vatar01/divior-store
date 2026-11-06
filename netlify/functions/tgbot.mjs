@@ -1,7 +1,7 @@
 // Telegram-бот администратора Divior (webhook).
 // Первый запуск: откройте в браузере  <адрес сайта>/.netlify/functions/tgbot?setup=1
 import { SITE, esc, money, tg, admins, botToken, webhookSecret, hasServiceAccount,
-  fsGet, fsPatch, fsAdd, fsQuery, STATUS, STATUS_ICON, orderText, orderKeyboard } from '../lib/core.mjs';
+  fsGet, fsPatch, fsAdd, fsQuery, setOrderStatus, STATUS, STATUS_ICON, orderText, orderKeyboard } from '../lib/core.mjs';
 
 const HELP = `<b>Бот магазина Divior</b>\n\n/new — новые заказы\n/orders — последние 10 заказов\n/chats — непрочитанные чаты с сайта\n/stats — продажи за сегодня\n\nЧтобы ответить покупателю из чата сайта, нажмите «Ответить» на его сообщении.`;
 const reply = (chat_id, text, extra = {}) => tg('sendMessage', { chat_id, text, parse_mode: 'HTML', disable_web_page_preview: true, ...extra });
@@ -21,8 +21,7 @@ async function onCallback(cq) {
   const [kind, id, st] = String(cq.data || '').split(':');
   if (kind !== 'st' || !STATUS[st]) return tg('answerCallbackQuery', { callback_query_id: cq.id });
   try {
-    await fsPatch('orders/' + id, { status: st });
-    const o = await fsGet('orders/' + id);
+    const o = await setOrderStatus(id, st);
     await tg('editMessageText', { chat_id: chatId, message_id: cq.message.message_id, text: orderText(o, id), parse_mode: 'HTML', reply_markup: orderKeyboard(id, st, o.customer?.phone) });
     return tg('answerCallbackQuery', { callback_query_id: cq.id, text: `Статус: ${STATUS[st]}` });
   } catch (e) {
@@ -49,7 +48,7 @@ async function onMessage(m) {
   const cmd = text.split(/[\s@]/)[0].toLowerCase();
   try {
     if (cmd === '/new' || cmd === '/orders') {
-      const list = cmd === '/new' ? await fsQuery('orders', { where: ['status', 'new'], limit: 20 }) : await fsQuery('orders', { orderBy: 'at', limit: 10 });
+      const list = cmd === '/new' ? [...await fsQuery('orders', { where: ['status', 'new'], limit: 20 }), ...await fsQuery('orders', { where: ['status', 'wait'], limit: 20 })] : await fsQuery('orders', { orderBy: 'at', limit: 10 });
       list.sort((a, b) => (b.at || 0) - (a.at || 0));
       if (!list.length) return reply(chatId, cmd === '/new' ? 'Новых заказов нет 👍' : 'Заказов пока нет.');
       for (const o of list.slice(0, 10)) await reply(chatId, orderText(o, o.id), { reply_markup: orderKeyboard(o.id, o.status, o.customer?.phone) });

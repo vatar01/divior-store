@@ -67,13 +67,16 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
-    // Заказы: покупатель создаёт свой заказ и видит только свои, статус меняет администратор.
+    // Заказы создаёт только сервер (функция order): он сам считает цены и списывает остатки.
+    // Покупатель видит только свои заказы; статус меняет администратор (через сервер или бота).
     match /orders/{id} {
       allow read: if signedIn() && (resource.data.uid == request.auth.uid || isAdmin());
-      allow create: if signedIn()
-        && request.resource.data.uid == request.auth.uid
-        && request.resource.data.status == 'new';
+      allow create: if false;
       allow update, delete: if isAdmin();
+    }
+    // Служебные счётчики защиты от спама — только для сервера.
+    match /limits/{id} {
+      allow read, write: if false;
     }
   }
 }
