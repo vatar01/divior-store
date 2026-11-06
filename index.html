@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Divior — империя посуды</title>
+<title>Divior — хрустальная империя посуды, Павлодар</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Great+Vibes&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -62,7 +62,8 @@ header.top{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--p
 .top .wrap{display:flex;align-items:center;gap:20px;height:68px}
 .logo{display:flex;flex-direction:column;align-items:flex-start;text-decoration:none;line-height:1}
 .wm{font-family:var(--script);font-size:40px;line-height:.95;background:var(--gold-grad);-webkit-background-clip:text;background-clip:text;color:transparent;padding:0 6px 2px 0}
-.tagline{font-size:9.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-top:-2px}
+@media (max-width:560px){.tagline{letter-spacing:.1em!important;font-size:8px!important}.wm{font-size:34px!important}}
+.tagline{white-space:nowrap;font-size:9.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-top:-2px}
 .menu{display:flex;gap:24px;margin-left:12px}
 .menu a{text-decoration:none;font-weight:500;font-size:15px;color:var(--muted)}
 .menu a:hover{color:var(--cobalt)}
@@ -276,16 +277,20 @@ tr:last-child td{border-bottom:0}
 
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--gold-grad);color:var(--on-gold);padding:12px 20px;border-radius:999px;font-weight:600;font-size:14.5px;z-index:100;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;max-width:calc(100% - 32px);text-align:center}
 .toast.on{opacity:1;transform:translateX(-50%)}
+.wa-float{position:fixed;right:18px;bottom:18px;z-index:40;width:56px;height:56px;border-radius:50%;background:#25D366;color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 28px -8px rgba(0,0,0,.6);transition:transform .2s}
+.wa-float:hover{transform:scale(1.06)}
+.wa-float svg{width:30px;height:30px}
+body.locked .wa-float{display:none}
 .banner{background:var(--cobalt-soft);color:var(--cobalt);font-size:13.5px;letter-spacing:.02em;text-align:center;padding:8px 16px}
 </style>
 </head>
 <body>
 
-<div class="banner" id="banner">Бесплатная доставка по Алматы при заказе от 30 000 ₸</div>
+<div class="banner" id="banner">Павлодар, ТД «Артур», бутик 1‑204 · Вт–Вс 10:00–19:00 · <a href="tel:+77753614090" style="color:inherit">+7 775 361-40-90</a></div>
 
 <header class="top">
   <div class="wrap">
-    <a class="logo" href="#top" aria-label="Divior, на главную"><span class="wm">Divior</span><span class="tagline">Империя посуды</span></a>
+    <a class="logo" href="#top" aria-label="Divior, на главную"><span class="wm">Divior</span><span class="tagline">Хрустальная империя посуды</span></a>
     <nav class="menu" id="menu" aria-label="Главное меню">
       <a href="#catalog">Каталог</a>
       <a href="#categories">Категории</a>
@@ -317,17 +322,17 @@ tr:last-child td{border-bottom:0}
   <section class="hero">
     <div class="wrap">
       <div>
-        <span class="eyebrow">Империя посуды · фарфор, керамика, стекло</span>
+        <span class="eyebrow">Хрустальная империя посуды · Павлодар</span>
         <h1>Посуда, с которой хочется <i>накрывать стол</i></h1>
-        <p class="lead">Тарелки, чашки, чайники и наборы для дома и гостей. Отбираем вещи, которые служат годами и выглядят хорошо каждый день.</p>
+        <p class="lead">Хрусталь, столовые сервизы и приборы, посуда для кухни, светильники и декор. Больше тысячи товаров в бутике в Павлодаре и с доставкой по Казахстану.</p>
         <div class="cta">
           <a class="btn" href="#catalog">Перейти в каталог</a>
           <a class="btn ghost" href="#delivery">Доставка и оплата</a>
         </div>
         <div class="perks">
-          <div><b>1 день</b><span>доставка по Алматы</span></div>
-          <div><b>14 дней</b><span>на возврат</span></div>
-          <div><b>0-0-12</b><span>рассрочка</span></div>
+          <div><b>1 400+</b><span>товаров в каталоге</span></div>
+          <div><b>Вт–Вс</b><span>с 10:00 до 19:00</span></div>
+          <div><b>Бутик</b><span>ТД «Артур», 1‑204</span></div>
         </div>
       </div>
       <div class="plate-wrap"><canvas id="plate" aria-label="Фарфоровая тарелка с золотой росписью"></canvas></div>
@@ -371,7 +376,7 @@ tr:last-child td{border-bottom:0}
     <div class="wrap">
       <div class="sec-head">
         <div><span class="eyebrow">Покупателям</span><h2>Доставка и оплата</h2></div>
-        <p class="muted">Хрупкое упаковываем в несколько слоёв. Если что-то разобьётся в пути, заменим бесплатно.</p>
+        <p class="muted">Заберите заказ в нашем бутике в Павлодаре или закажите доставку. Хрупкое упаковываем бережно, в несколько слоёв.</p>
       </div>
       <div class="info-grid">
         <div class="info">
@@ -383,13 +388,13 @@ tr:last-child td{border-bottom:0}
           <div class="pay-list" id="payList"></div>
         </div>
         <div class="info">
-          <h3>Возврат и обмен</h3>
+          <h3>Наш бутик</h3>
           <ul>
-            <li><span>Срок возврата</span><b>14 дней</b></li>
-            <li><span>Бой при доставке</span><b>Замена за наш счёт</b></li>
-            <li><span>Возврат денег</span><b>до 5 рабочих дней</b></li>
+            <li><span>Адрес</span><b style="text-align:right">ТД «Артур», бутик 1‑204</b></li>
+            <li><span>Вход</span><b style="text-align:right;font-weight:500">с ул. Малайсары батыра, 1 этаж, направо</b></li>
+            <li><span>Часы</span><b style="text-align:right">Вт–Вс 10:00–19:00</b></li>
           </ul>
-          <p class="muted" style="margin-top:12px;font-size:14px">Товар должен быть без следов использования, в оригинальной упаковке.</p>
+          <p class="muted" style="margin-top:12px;font-size:14px">Вопросы по обмену и возврату решим по телефону <a href="tel:+77753614090">+7 775 361-40-90</a> или в WhatsApp.</p>
         </div>
       </div>
     </div>
@@ -399,17 +404,34 @@ tr:last-child td{border-bottom:0}
     <div class="wrap about">
       <div>
         <span class="eyebrow">О магазине</span>
-        <h2 style="margin:10px 0 18px">Divior — империя посуды</h2>
-        <p>Мы собираем посуду, которой пользуемся сами: прочный фарфор, керамику ручной работы и стекло, которое не боится посудомоечной машины.</p>
-        <p>Каждую партию проверяем перед отправкой. Если сомневаетесь в выборе, напишите нам, и мы поможем подобрать сервиз под ваш стол.</p>
+        <h2 style="margin:10px 0 18px">Divior — хрустальная империя посуды</h2>
+        <p>Мы магазин посуды и светотехники в Павлодаре. У нас хрустальная посуда, столовые сервизы и приборы, кастрюли и сковороды, светильники и люстры, элементы декора и статуэтки.</p>
+        <p>Приходите в бутик посмотреть и подержать товар в руках или закажите на сайте. Если сомневаетесь в выборе, напишите нам, и мы поможем подобрать сервиз или подарок.</p>
+        <div class="info" id="contacts" style="margin-top:22px">
+          <h3>Как нас найти</h3>
+          <ul>
+            <li><span>Адрес</span><b style="text-align:right">Павлодар, ТД «Артур», бутик 1‑204</b></li>
+            <li><span>Как пройти</span><b style="text-align:right;font-weight:500">1 этаж, направо, вход с улицы Малайсары батыра. Есть пандус</b></li>
+            <li><span>Часы работы</span><b style="text-align:right">Вт–Вс 10:00–19:00<br><small class="muted" style="font-weight:400">Понедельник выходной</small></b></li>
+            <li><span>Телефоны</span><b style="text-align:right"><a href="tel:+77753614090">+7 775 361-40-90</a><br><a href="tel:+77073663002">+7 707 366-30-02</a></b></li>
+          </ul>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:16px">
+            <a class="btn small" href="https://wa.me/77753614090" target="_blank" rel="noopener">WhatsApp</a>
+            <a class="btn small ghost" href="https://t.me/+77753614090" target="_blank" rel="noopener">Telegram</a>
+            <a class="btn small ghost" href="https://www.instagram.com/imperia_posudi_divior_elamina/" target="_blank" rel="noopener">Instagram</a>
+            <a class="btn small ghost" href="https://2gis.kz/pavlodar/firm/70000001039038784" target="_blank" rel="noopener">Открыть в 2ГИС</a>
+            <a class="btn small ghost" href="https://yandex.kz/maps/ru/org/divior/149963572452/" target="_blank" rel="noopener">Яндекс Карты</a>
+          </div>
+        </div>
       </div>
       <div id="faq">
         <span class="eyebrow">Частые вопросы</span>
-        <h2 style="margin:10px 0 18px;font-size:clamp(26px,3.4vw,36px)">Уход и выбор</h2>
-        <details><summary>Можно ли мыть в посудомоечной машине?</summary><p>Фарфор и стекло из каталога можно. Керамику ручной работы и посуду с золотой каймой лучше мыть вручную.</p></details>
-        <details><summary>Подходит ли посуда для микроволновки?</summary><p>Да, кроме изделий с металлической отделкой. Это указано в описании каждого товара.</p></details>
-        <details><summary>Можно ли купить предметы из набора по отдельности?</summary><p>Большинство серий продаются поштучно. Если нужного предмета нет в каталоге, напишите нам.</p></details>
-        <details><summary>Делаете ли вы подарочную упаковку?</summary><p>Да, укажите это в комментарии к заказу. Упаковка бесплатна при заказе от 15 000 ₸.</p></details>
+        <h2 style="margin:10px 0 18px;font-size:clamp(26px,3.4vw,36px)">Покупателям</h2>
+        <details><summary>Можно ли забрать заказ самому?</summary><p>Да. Оформите заказ с самовывозом, мы позвоним, когда он будет готов. Бутик в ТД «Артур», 1 этаж, бутик 1‑204, со вторника по воскресенье с 10:00 до 19:00.</p></details>
+        <details><summary>Сколько стоит доставка?</summary><p>Зависит от адреса и размера заказа. Стоимость назовём, когда позвоним подтвердить заказ.</p></details>
+        <details><summary>Как оплатить?</summary><p>Картой, наличными, переводом через банк или по QR-коду. Удобный способ выберите при оформлении заказа.</p></details>
+        <details><summary>Есть ли товар в наличии?</summary><p>В каталоге указан остаток на складе. Если нужно много штук или товара нет, напишите нам в WhatsApp, и мы подскажем сроки.</p></details>
+        <details><summary>Можно ли посмотреть товар вживую?</summary><p>Конечно, приходите в бутик. Перед визитом можно написать нам, чтобы мы отложили нужный товар.</p></details>
       </div>
     </div>
   </section>
@@ -418,13 +440,13 @@ tr:last-child td{border-bottom:0}
 <footer>
   <div class="wrap">
     <div>
-      <div class="logo"><span class="wm">Divior</span><span class="tagline">Ыдыс-аяқ империясы · Империя посуды</span></div>
-      <p style="opacity:.7;margin-top:10px;max-width:36ch;font-size:14.5px">Посуда для дома и гостей. Алматы, доставка по всему Казахстану.</p>
+      <div class="logo"><span class="wm">Divior</span><span class="tagline">Хрустальная империя посуды</span></div>
+      <p style="opacity:.7;margin-top:10px;max-width:36ch;font-size:14.5px">Посуда, хрусталь и светотехника. Павлодар, доставка по Казахстану.</p>
     </div>
     <div><h4>Магазин</h4><a href="#catalog">Каталог</a><a href="#categories">Категории</a><a href="#delivery">Доставка</a></div>
-    <div><h4>Помощь</h4><a href="#faq">Вопросы</a><a href="#delivery">Возврат</a><a href="#about">О нас</a></div>
-    <div><h4>Контакты</h4><span style="display:block;margin-bottom:6px">+7 700 000-00-00</span><span style="display:block;margin-bottom:6px">Ежедневно 10:00–20:00</span><span style="display:block">Алматы</span></div>
-    <div class="copy">© 2026 Divior</div>
+    <div><h4>Мы в сети</h4><a href="https://wa.me/77753614090" target="_blank" rel="noopener">WhatsApp</a><a href="https://t.me/+77753614090" target="_blank" rel="noopener">Telegram</a><a href="https://www.instagram.com/imperia_posudi_divior_elamina/" target="_blank" rel="noopener">Instagram</a></div>
+    <div><h4>Контакты</h4><a href="tel:+77753614090">+7 775 361-40-90</a><a href="tel:+77073663002">+7 707 366-30-02</a><span style="display:block;margin-bottom:6px">Вт–Вс 10:00–19:00</span><a href="#contacts">Павлодар, ТД «Артур», 1‑204</a></div>
+    <div class="copy">© 2026 Divior · Ыдыс-аяқ империясы · Павлодар</div>
   </div>
 </footer>
 
@@ -458,6 +480,7 @@ tr:last-child td{border-bottom:0}
   <div class="admin-body" id="adminBody"></div>
 </div>
 
+<a class="wa-float" href="https://wa.me/77753614090" target="_blank" rel="noopener" aria-label="Написать в WhatsApp"><svg viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" d="M16 3C9 3 3.3 8.6 3.3 15.6c0 2.4.7 4.7 1.9 6.7L3 29l6.9-2.2c1.9 1 4 1.6 6.1 1.6 7 0 12.7-5.6 12.7-12.6S23 3 16 3zm0 23.1c-1.9 0-3.8-.5-5.4-1.5l-.4-.2-4.1 1.3 1.3-4-.3-.4c-1.1-1.7-1.7-3.6-1.7-5.6C5.4 9.8 10.2 5.1 16 5.1s10.6 4.7 10.6 10.5S21.8 26.1 16 26.1zm5.8-7.8c-.3-.2-1.9-.9-2.2-1-.3-.1-.5-.2-.7.2-.2.3-.8 1-1 1.2-.2.2-.4.2-.7.1-.3-.2-1.3-.5-2.5-1.6-.9-.8-1.6-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.5-.6c.2-.2.2-.3.3-.6.1-.2 0-.4 0-.6l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.1-1.2 2.8s1.2 3.2 1.4 3.5c.2.2 2.4 3.7 5.8 5.1 2.9 1.1 3.4.9 4 .8.6-.1 1.9-.8 2.2-1.5.3-.8.3-1.4.2-1.5-.1-.2-.3-.3-.6-.4z"/></svg></a>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
@@ -491,23 +514,24 @@ const CATS=[
   {id:'cookware',name:'Кастрюли и сковороды',shape:'pot'},
   {id:'kitchen',name:'Кухонная утварь',shape:'jar'},
   {id:'appliances',name:'Техника для кухни',shape:'pot'},
-  {id:'light',name:'Свет и декор',shape:'lamp'},
+  {id:'light',name:'Светотехника',shape:'lamp'},
+  {id:'decor',name:'Декор и статуэтки',shape:'vase'},
   {id:'other',name:'Разное',shape:'box'}
 ];
-const SHAPES={plate:'Тарелка',bowl:'Миска',cup:'Чашка с блюдцем',mug:'Кружка',teapot:'Чайник',glass:'Бокал',tumbler:'Стакан',pot:'Кастрюля',pan:'Сковорода',set:'Набор',cutlery:'Приборы',dish:'Блюдо',jar:'Банка',lamp:'Люстра',box:'Коробка'};
+const SHAPES={plate:'Тарелка',bowl:'Миска',cup:'Чашка с блюдцем',mug:'Кружка',teapot:'Чайник',glass:'Бокал',tumbler:'Стакан',pot:'Кастрюля',pan:'Сковорода',set:'Набор',cutlery:'Приборы',dish:'Блюдо',jar:'Банка',lamp:'Люстра',vase:'Ваза',box:'Коробка'};
 const COLORS={'#FFFFFF':'Белый','#1F3FA6':'Синий','#2B2E33':'Графит','#8FA58B':'Шалфей','#D9C6A5':'Песочный','#C8643B':'Терракота','#A9C7E8':'Голубой','#E9DCCB':'Молочный','#C9A45C':'Золотой','#141414':'Чёрный','#D8DCE2':'Серебристый'};
 const LIGHT=['#FFFFFF','#D9C6A5','#A9C7E8','#E9DCCB','#D8DCE2'];
 const PATTERNS={none:'Без узора',gzhel:'Роспись цветами',stripe:'Полоска',dots:'Горошек',rim:'Кайма'};
 const SHIP=[
-  {id:'courier',name:'Курьером по Алматы',note:'На следующий день, с 10:00 до 21:00',cost:1500,freeFrom:30000},
-  {id:'pickup',name:'Самовывоз',note:'Из шоурума в Алматы, в день заказа',cost:0},
-  {id:'kz',name:'По Казахстану',note:'Транспортной компанией, 2–5 дней',cost:3000,freeFrom:60000}
+  {id:'courier',name:'Курьером по Павлодару',note:'Стоимость и время согласуем по телефону',cost:null},
+  {id:'pickup',name:'Самовывоз из бутика',note:'Павлодар, ТД «Артур», бутик 1‑204, Вт–Вс 10:00–19:00',cost:0},
+  {id:'kz',name:'По Казахстану',note:'Транспортной компанией, стоимость рассчитаем по адресу',cost:null}
 ];
 const PAY=[
-  {id:'kaspi',ic:'QR',name:'Kaspi QR',note:'Отсканируйте код в приложении Kaspi.kz после подтверждения заказа'},
-  {id:'card',ic:'💳',name:'Картой онлайн',note:'Visa, Mastercard. Ссылку на оплату пришлём после подтверждения'},
-  {id:'install',ic:'0-12',name:'Рассрочка',note:'До 12 месяцев без переплаты, оформление через банк'},
-  {id:'cash',ic:'₸',name:'При получении',note:'Наличными или картой курьеру либо в шоуруме'}
+  {id:'qr',ic:'QR',name:'По QR-коду',note:'Пришлём QR-код для оплаты после подтверждения заказа'},
+  {id:'card',ic:'💳',name:'Картой',note:'При получении в бутике или курьеру'},
+  {id:'bank',ic:'Банк',name:'Переводом через банк',note:'Реквизиты пришлём после подтверждения заказа'},
+  {id:'cash',ic:'₸',name:'Наличными',note:'При получении в бутике или курьеру'}
 ];
 const STATUS={new:['Новый','s-new'],paid:['Оплачен','s-paid'],ship:['В доставке','s-ship'],done:['Выполнен','s-done'],cancel:['Отменён','s-cancel']};
 
@@ -552,6 +576,7 @@ function art(p){
     case 'dish': g=`<ellipse cx="100" cy="138" rx="78" ry="8" fill="#000" opacity=".08"/>${body('M20,80 a80,48 0 1,0 160,0 a80,48 0 1,0 -160,0')}<ellipse cx="100" cy="80" rx="58" ry="32" fill="${base}" stroke="${edge}" stroke-width="1.2"/>${rim('M28,80 a72,42 0 1,0 144,0 a72,42 0 1,0 -144,0')}`;break;
     case 'jar': g=`${shadow}${body('M58,52 H142 V128 Q142,140 130,140 H70 Q58,140 58,128 Z')}<rect x="52" y="34" width="96" height="20" rx="7" fill="#B8895A" stroke="rgba(0,0,0,.2)"/>${rim('M58,70 H142')}`;break;
     case 'lamp': g=`<path d="M100,0 V34" stroke="#8C7440" stroke-width="3"/><circle cx="100" cy="40" r="9" fill="${deco==='#FFFFFF'?'#C9A45C':deco}"/>${[-56,-28,0,28,56].map(dx=>`<path d="M100,46 Q${100+dx},${dx?60:58} ${100+dx},${dx?84:96}" fill="none" stroke="#C9A45C" stroke-width="3"/><circle cx="${100+dx}" cy="${dx?78:90}" r="13" fill="#FFE9A8" opacity=".35"/><path d="M${92+dx},${dx?90:102} h16 l-3,10 h-10 z" fill="${base==='#FFFFFF'?'#C9A45C':base}"/><ellipse cx="${100+dx}" cy="${dx?82:94}" rx="5" ry="8" fill="#FFF4CF"/>`).join('')}<path d="M70,112 q30,22 60,0" fill="none" stroke="#E6D3A0" stroke-width="2" stroke-dasharray="2 5"/>`;break;
+    case 'vase': g=`${shadow}${body('M84,22 H116 Q114,40 126,62 Q146,96 128,128 Q122,140 100,140 Q78,140 72,128 Q54,96 74,62 Q86,40 84,22 Z')}<ellipse cx="100" cy="22" rx="17" ry="5" fill="#000" opacity=".12"/>${rim('M70,104 Q100,116 130,104')}`;break;
     case 'box': g=`${shadow}<rect x="52" y="64" width="96" height="76" rx="6" fill="${base}" stroke="${edge}" stroke-width="1.5"/><rect x="44" y="48" width="112" height="22" rx="6" fill="${base}" stroke="${edge}" stroke-width="1.5"/><rect x="94" y="48" width="12" height="92" fill="${deco}"/><path d="M100,48 C80,22 64,36 84,46 Z M100,48 C120,22 136,36 116,46 Z" fill="${deco}"/>`;break;
     case 'pan': g=`<ellipse cx="80" cy="140" rx="60" ry="7" fill="#000" opacity=".08"/><path d="M128,84 L188,62" stroke="${light?'#2B2E33':'#3A2A20'}" stroke-width="11" stroke-linecap="round"/>${body(circ(78,84,56))}<circle cx="78" cy="84" r="42" fill="#2B2E33" opacity="${light?.85:.35}"/>`;break;
     case 'set': g=`<ellipse cx="96" cy="146" rx="74" ry="7" fill="#000" opacity=".08"/>${[0,1,2].map(i=>`<ellipse cx="80" cy="${134-i*12}" rx="${62-i*4}" ry="${11-i}" fill="${base}" stroke="${edge}" stroke-width="1.5"/>`).join('')}${pat!=='none'&&pat!=='rim'?`<ellipse cx="80" cy="110" rx="54" ry="9" fill="url(#${id})"/>`:''}${body('M120,62 H176 C176,96 164,112 148,112 C132,112 120,96 120,62 Z')}<path d="M174,70 C192,70 192,96 170,98" fill="none" stroke="${edge}" stroke-width="5"/>${rim('M120,70 H176')}`;break;
@@ -659,7 +684,7 @@ function renderHeader(){
   $('#accountLbl').textContent=S.customer?.profile?.name?S.customer.profile.name.split(' ')[0]:'Войти';
 }
 function renderInfo(){
-  $('#shipList').innerHTML=SHIP.map(s=>`<li><span>${s.name}<br><small class="muted">${s.note}</small></span><b class="price">${s.cost?money(s.cost):'Бесплатно'}${s.freeFrom?`<br><small class="muted" style="font-weight:400">бесплатно от ${money(s.freeFrom)}</small>`:''}</b></li>`).join('');
+  $('#shipList').innerHTML=SHIP.map(s=>`<li><span>${s.name}<br><small class="muted">${s.note}</small></span><b class="price">${s.cost==null?'Уточним по телефону':s.cost?money(s.cost):'Бесплатно'}${s.freeFrom?`<br><small class="muted" style="font-weight:400">бесплатно от ${money(s.freeFrom)}</small>`:''}</b></li>`).join('');
   $('#payList').innerHTML=PAY.map(p=>`<div class="pay"><i>${p.ic}</i><div><b>${p.name}</b><small>${p.note}</small></div></div>`).join('');
 }
 function renderAll(){renderHeader();renderCats();renderGrid();setTimeout(hydratePhotos);if($('#cart').classList.contains('on'))renderCart();if($('#admin').classList.contains('on'))renderAdmin()}
@@ -696,8 +721,8 @@ function renderCart(){
   $('#cartBody').innerHTML=lines.map(({p,q})=>`<div class="line-item"><div class="thumb">${pic(p)}</div>
     <div><div class="t">${esc(p.name)}</div><div class="muted price" style="font-size:13.5px">${money(p.price)} × ${q}</div><button class="link" data-rm="${p.id}">Удалить</button></div>
     <div style="display:grid;gap:8px;justify-items:end"><b class="price">${money(p.price*q)}</b><span class="stepper"><button data-dec="${p.id}" aria-label="Меньше">−</button><span>${q}</span><button data-inc="${p.id}" aria-label="Больше">+</button></span></div></div>`).join('');
-  const sum=cartSum(),left=30000-sum;
-  $('#cartFoot').innerHTML=`${left>0?`<div class="note">До бесплатной доставки по Алматы: <b class="price">${money(left)}</b></div>`:`<div class="note">Доставка по Алматы будет бесплатной</div>`}
+  const sum=cartSum();
+  $('#cartFoot').innerHTML=`<div class="note">Самовывоз бесплатно: Павлодар, ТД «Артур», бутик 1‑204</div>
     <div class="row total"><span>Итого</span><span class="price">${money(sum)}</span></div>
     <button class="btn block" id="toCheckout">Оформить заказ</button>`;
 }
@@ -773,7 +798,7 @@ async function doProfile(form){const d=readProfile(form),m=checkProfile(d);if(m)
 
 /* ===================== города и адреса Казахстана ===================== */
 const KZ=[
- ['Города республиканского значения',['Алматы','Астана','Шымкент']],
+ ['Города республиканского значения',['Астана','Алматы','Шымкент']],
  ['Абайская область',['Семей','Аягоз','Курчатов']],
  ['Акмолинская область',['Кокшетау','Степногорск','Щучинск','Косшы','Атбасар']],
  ['Актюбинская область',['Актобе','Кандыагаш','Хромтау','Шалкар']],
@@ -820,17 +845,19 @@ function pickSug(i){const x=sugList[i];if(!x)return;const inp=$('#co-street');in
   if(!/\d/.test(x.main)){$('#co-err').textContent='Добавьте номер дома.';inp.focus()}else{$('#co-err').textContent='';$('#co-apt').focus()}}
 
 /* ===================== оформление заказа ===================== */
-function shipCost(id,sum){const s=SHIP.find(x=>x.id===id);return !s?0:(s.freeFrom&&sum>=s.freeFrom?0:s.cost)}
+function shipCost(id,sum){const s=SHIP.find(x=>x.id===id);return !s||s.cost==null?0:(s.freeFrom&&sum>=s.freeFrom?0:s.cost)}
+const shipTbd=id=>(SHIP.find(x=>x.id===id)||{}).cost==null;
+const shipLabel=(s,sum)=>s.cost==null?'Уточним':shipCost(s.id,sum)?money(shipCost(s.id,sum)):'Бесплатно';
 function openCheckout(){
   if(!cartLines().length)return;
   if(!S.user){S.afterLogin='checkout';openModal('Вход для оформления',`<p class="muted" style="margin-bottom:14px">Войдите или создайте аккаунт, чтобы мы могли связаться с вами и доставить заказ.</p>${authHtml('up')}`,true);return}
   if(!S.customer?.profile){S.afterLogin='checkout';openAccount('edit');return}
   const pr=S.customer.profile,sa=S.customer.addr||{},sum=cartSum();
   openModal('Оформление заказа',`<form class="form" id="checkoutForm" novalidate>
-    <fieldset><legend>Получение</legend><div class="opts">${SHIP.map((s,i)=>`<label class="opt" for="sh-${s.id}"><input type="radio" id="sh-${s.id}" name="ship" value="${s.id}" ${i===0?'checked':''}><span><b>${s.name}</b><small>${s.note}</small></span><span class="r price">${shipCost(s.id,sum)?money(shipCost(s.id,sum)):'Бесплатно'}</span></label>`).join('')}</div></fieldset>
+    <fieldset><legend>Получение</legend><div class="opts">${SHIP.map((s,i)=>`<label class="opt" for="sh-${s.id}"><input type="radio" id="sh-${s.id}" name="ship" value="${s.id}" ${i===0?'checked':''}><span><b>${s.name}</b><small>${s.note}</small></span><span class="r price">${shipLabel(s,sum)}</span></label>`).join('')}</div></fieldset>
     <fieldset id="addrWrap"><legend>Адрес доставки</legend>
-      <label class="f" for="co-city">Город${citySelect(sa.city||'Алматы')}</label>
-      <label class="f" for="co-city-other" id="cityOtherWrap" hidden>Населённый пункт и область<input id="co-city-other" name="cityOther" value="${esc(sa.cityOther||'')}" placeholder="Например: Иргели, Алматинская область"></label>
+      <label class="f" for="co-city">Город${citySelect(sa.city||'Павлодар')}</label>
+      <label class="f" for="co-city-other" id="cityOtherWrap" hidden>Населённый пункт и область<input id="co-city-other" name="cityOther" value="${esc(sa.cityOther||'')}" placeholder="Например: Кенжеколь, Павлодарская область"></label>
       <div class="f addr-f"><label for="co-street">Улица и дом</label>
         <input id="co-street" name="street" autocomplete="off" role="combobox" aria-autocomplete="list" aria-controls="addrSug" aria-expanded="false" placeholder="Начните вводить: Абая 1…" value="${esc(sa.street||'')}">
         <div class="sug-box" id="addrSug" role="listbox" hidden></div>
@@ -848,13 +875,13 @@ function openCheckout(){
 }
 function updateCoSum(){const f=$('#checkoutForm');if(!f)return;
   const other=f.city.value==='__other';$('#cityOtherWrap').hidden=!other;
-  const almaty=f.city.value==='Алматы',cour=$('#sh-courier');
+  const almaty=f.city.value==='Павлодар',cour=$('#sh-courier');
   cour.disabled=!almaty;cour.closest('.opt').style.opacity=almaty?'':'.45';
   if(!almaty&&cour.checked)$('#sh-kz').checked=true;
   if(almaty&&$('#sh-kz').checked&&!S.kzManual)cour.checked=true;
   const ship=f.ship.value,sum=cartSum(),c=shipCost(ship,sum);
   $('#addrWrap').style.display=ship==='pickup'?'none':'';
-  $('#coSum').innerHTML=`<div class="row"><span>Товары (${cartQty()})</span><span class="price">${money(sum)}</span></div><div class="row"><span>Доставка</span><span class="price">${c?money(c):'Бесплатно'}</span></div><div class="row total" style="margin-top:6px"><span>К оплате</span><span class="price">${money(sum+c)}</span></div>`}
+  $('#coSum').innerHTML=`<div class="row"><span>Товары (${cartQty()})</span><span class="price">${money(sum)}</span></div><div class="row"><span>Доставка</span><span class="price">${shipTbd(ship)?'уточним по телефону':c?money(c):'Бесплатно'}</span></div><div class="row total" style="margin-top:6px"><span>К оплате${shipTbd(ship)?' <small class="muted" style="font-weight:400;font-size:13px">+ доставка</small>':''}</span><span class="price">${money(sum+c)}</span></div>`}
 async function placeOrder(f){
   const ship=f.ship.value,pay=f.pay.value,sum=cartSum(),c=shipCost(ship,sum);
   const addr={city:f.city.value,cityOther:f.cityOther.value.trim(),street:f.street.value.trim(),apt:f.apt.value.trim(),extra:f.extra.value.trim()};
@@ -867,11 +894,11 @@ async function placeOrder(f){
   const order={num:'D-'+Date.now().toString(36).toUpperCase().slice(-6),at:Date.now(),status:'new',uid:S.user.uid,
     customer:{name:pr.name,phone:pr.phone,email:S.user.email||''},
     items:cartLines().map(({p,q})=>({pid:p.id,name:p.name,price:num(p.price),q})),
-    sum,shipCost:c,total:sum+c,ship,shipName:SHIP.find(s=>s.id===ship).name,pay,payName:PAY.find(p=>p.id===pay).name,
+    sum,shipCost:c,shipTbd:shipTbd(ship),total:sum+c,ship,shipName:SHIP.find(s=>s.id===ship).name,pay,payName:PAY.find(p=>p.id===pay).name,
     address:ship==='pickup'?'':addrText(addr),region:ship==='pickup'?'':(addr.city==='__other'?'':regionOf(addr.city)),comment:f.comment.value.trim()};
   try{await B.addOrder(order);if(ship!=='pickup'){B.saveAddress(S.user.uid,addr).catch(()=>{});S.customer={...S.customer,addr}}S.cart={};saveCart();renderAll();
     openModal('Заказ принят',`<div class="success"><span class="eyebrow">Спасибо!</span><div class="num">№ ${order.num}</div>
-      <p>Сумма к оплате: <b class="price">${money(order.total)}</b>. Способ оплаты: ${esc(order.payName)}.</p>
+      <p>Сумма к оплате: <b class="price">${money(order.total)}</b>${order.shipTbd?' + доставка (стоимость назовём по телефону)':''}. Способ оплаты: ${esc(order.payName)}.</p>
       <p class="muted" style="margin:10px 0 20px">Мы свяжемся с вами для подтверждения. Статус заказа виден в аккаунте.</p>
       <button class="btn" id="goAccount">Открыть мои заказы</button></div>`,true)}
   catch(e){$('#co-err').textContent='Не удалось оформить заказ. Попробуйте ещё раз.';btn.disabled=false}
@@ -907,7 +934,7 @@ function renderAdmin(){
         <td>${esc(o.customer?.name||'—')}<br><small class="muted">${esc(o.customer?.phone||'')}</small></td>
         <td>${(o.items||[]).map(i=>`${esc(i.name)} × ${i.q}`).join('<br>')}${o.comment?`<br><small class="muted">«${esc(o.comment)}»</small>`:''}</td>
         <td>${esc(o.shipName)}${o.address?`<br><small class="muted">${esc(o.address)}</small>`:''}<br><small>${esc(o.payName)}</small></td>
-        <td class="num"><b>${money(o.total)}</b></td>
+        <td class="num"><b>${money(o.total)}</b>${o.shipTbd?'<br><small class="muted">+ доставка</small>':''}</td>
         <td><select class="sel" style="height:36px" id="st-${esc(o.id)}" data-status="${esc(o.id)}" aria-label="Статус заказа ${esc(o.num||o.id)}">${Object.entries(STATUS).map(([k,v])=>`<option value="${k}" ${o.status===k?'selected':''}>${v[0]}</option>`).join('')}</select></td></tr>`).join('')}
       </tbody></table></div>`:`<div class="empty">Заказов пока нет. Когда покупатель оформит заказ, он появится здесь.</div>`}`;
   } else {
@@ -1015,7 +1042,8 @@ async function readXlsx(file){
   return rows}
 
 const CAT_RULES=[
- ['light',/люстр|подвес|светильник|ламп|(^|[\s,])бра([\s,]|$)|торшер|плафон|[eе]14|[eе]27|крепеж|крепёж|гирлянд|канделябр|выключател|розетк/],
+ ['decor',/статуэт|фигурк|канделябр|подсвечн|шкатулк|(^|[\s,])часы|сувенир|панно|декор|бусы|снегуроч|снежинк|новогод|ёлоч|елоч|копилк/],
+ ['light',/люстр|подвес|светильник|ламп|(^|[\s,])бра([\s,]|$)|торшер|плафон|[eе]14|[eе]27|крепеж|крепёж|гирлянд|выключател|розетк/],
  ['appliances',/мантоварк|вафельниц|электрочайник|электрическ|пароварк|мультивар|блендер|миксер|мясоруб|тостер|кофевар|кофемашин|термопот|электро/],
  ['cutlery',/прибор|ложк|ложек|вилк|вилок|(^|[\s,])нож([\s,]|$|ей|и(?!ц))|лезвие|палочк/],
  ['cookware',/кастрюл|сковород|казан|ковш|сотейник|жаровн|блинная|(^|[\s,])вок([\s,]|$)|гусятниц|утятниц|противень|гриль/],
@@ -1039,6 +1067,7 @@ function looksOf(cat,n){const t=n.toLowerCase(),gold=/золот/.test(t),shape=
   else if(cat==='cookware'||cat==='appliances'){color=/чугун|мрамор|гранит|антипригар|черн|чёрн/.test(t)?'#2B2E33':'#D8DCE2';pattern='none'}
   else if(cat==='glass'){pattern='none'}
   else if(cat==='light'){color='#C9A45C'}
+  else if(cat==='decor'){color=gold?'#C9A45C':'#FFFFFF';pattern='rim'}
   else if(cat==='other'){color='#141414'}
   else if(/черн|чёрн/.test(t))color='#141414';
   else if(!gold&&/цвет|роз|узор/.test(t))pattern='gzhel';
