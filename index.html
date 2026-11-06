@@ -808,7 +808,7 @@ async function sendChat(f){const text=$('#cf-text').value.trim();if(!text)return
   const btn=f.querySelector('[type=submit]');btn.disabled=true;$('#cf-err').textContent='';
   try{await B.chatSend(cid,{from:'client',text,at:Date.now()},{name,phone,first,uid:S.user?.uid||'',email:S.user?.email||''});
     $('#cf-text').value='';subscribeChat();
-    const lastN=+(sessionStorage.getItem('divior-chat-notified')||0);if(first||Date.now()-lastN>120000){notify({type:'chat',cid,name,phone,text});try{sessionStorage.setItem('divior-chat-notified',String(Date.now()))}catch(e){}}}
+    notify({type:'chat',cid,name,phone,text})}
   catch(e){$('#cf-err').textContent='Не удалось отправить. Попробуйте ещё раз или напишите в WhatsApp.'}
   btn.disabled=false;$('#cf-text').focus()}
 /* админка: чаты */
