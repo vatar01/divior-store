@@ -1,0 +1,35 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Почта администратора. Должна совпадать с ADMIN_EMAIL в index.html.
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.email.lower() == 'ryabovdima112@gmail.com';
+    }
+    function signedIn() { return request.auth != null; }
+
+    // Каталог видят все, менять может только администратор.
+    match /products/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Профиль покупателя: свой видит и меняет сам покупатель, все профили видит администратор.
+    match /users/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || isAdmin());
+      allow create, update: if signedIn() && request.auth.uid == uid;
+      allow delete: if isAdmin();
+    }
+
+    // Заказы: покупатель создаёт свой заказ и видит только свои, статус меняет администратор.
+    match /orders/{id} {
+      allow read: if signedIn() && (resource.data.uid == request.auth.uid || isAdmin());
+      allow create: if signedIn()
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.status == 'new';
+      allow update, delete: if isAdmin();
+    }
+  }
+}
