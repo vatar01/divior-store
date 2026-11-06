@@ -314,6 +314,8 @@ tr:last-child td{border-bottom:0}
 .specs dt,.specs dd{padding:9px 0;border-bottom:1px dashed var(--line)}
 .specs dt{color:var(--muted);padding-right:16px}
 .desc-text{white-space:pre-line;color:#D7CFC2;font-size:15px;line-height:1.6;margin-top:14px}
+.test-bar{position:fixed;left:18px;bottom:18px;z-index:45;display:flex;align-items:center;gap:12px;padding:8px 8px 8px 16px;border-radius:999px;background:rgba(15,14,12,.92);border:1px solid var(--cobalt);box-shadow:0 10px 28px -10px rgba(0,0,0,.7);font-size:14px;font-weight:600;white-space:nowrap;max-width:calc(100% - 24px)}
+@media (max-width:560px){.test-bar{left:12px;right:12px;bottom:84px;justify-content:space-between}.test-bar span{white-space:normal;font-size:13px}}
 .wa-float{position:fixed;right:18px;bottom:18px;z-index:40;width:56px;height:56px;border-radius:50%;background:#25D366;color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 28px -8px rgba(0,0,0,.6);transition:transform .2s}
 .wa-float:hover{transform:scale(1.06)}
 .wa-float svg{width:30px;height:30px}
@@ -521,6 +523,7 @@ body.locked .wa-float{display:none}
   <div class="admin-top">
     <h3>Админ-панель</h3>
     <span style="opacity:.7;font-size:14px">Видно только владельцу магазина</span>
+    <button class="btn small" id="asCustomerOn">👁 Смотреть как покупатель</button>
     <button class="btn small ghost" id="adminClose" style="color:var(--porcelain);border-color:var(--porcelain)">Вернуться в магазин</button>
   </div>
   <div class="tabs" role="tablist">
@@ -533,6 +536,7 @@ body.locked .wa-float{display:none}
 </div>
 
 <a class="wa-float" href="https://wa.me/77753614090" target="_blank" rel="noopener" aria-label="Написать в WhatsApp"><svg viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" d="M16 3C9 3 3.3 8.6 3.3 15.6c0 2.4.7 4.7 1.9 6.7L3 29l6.9-2.2c1.9 1 4 1.6 6.1 1.6 7 0 12.7-5.6 12.7-12.6S23 3 16 3zm0 23.1c-1.9 0-3.8-.5-5.4-1.5l-.4-.2-4.1 1.3 1.3-4-.3-.4c-1.1-1.7-1.7-3.6-1.7-5.6C5.4 9.8 10.2 5.1 16 5.1s10.6 4.7 10.6 10.5S21.8 26.1 16 26.1zm5.8-7.8c-.3-.2-1.9-.9-2.2-1-.3-.1-.5-.2-.7.2-.2.3-.8 1-1 1.2-.2.2-.4.2-.7.1-.3-.2-1.3-.5-2.5-1.6-.9-.8-1.6-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.5-.6c.2-.2.2-.3.3-.6.1-.2 0-.4 0-.6l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.1-1.2 2.8s1.2 3.2 1.4 3.5c.2.2 2.4 3.7 5.8 5.1 2.9 1.1 3.4.9 4 .8.6-.1 1.9-.8 2.2-1.5.3-.8.3-1.4.2-1.5-.1-.2-.3-.3-.6-.4z"/></svg></a>
+<div class="test-bar" id="testBar" hidden><span>👁 Вы смотрите сайт как покупатель</span><button class="btn small" id="asCustomerOff">Вернуться в админку</button></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
@@ -723,6 +727,9 @@ function renderInfo(){
   $('#shipList').innerHTML=SHIP.map(s=>`<li><span>${s.name}<br><small class="muted">${s.note}</small></span><b class="price">${s.cost==null?'Уточним по телефону':s.cost?money(s.cost):'Бесплатно'}${s.freeFrom?`<br><small class="muted" style="font-weight:400">бесплатно от ${money(s.freeFrom)}</small>`:''}</b></li>`).join('');
   $('#payList').innerHTML=PAY.map(p=>`<div class="pay"><i>${p.ic}</i><div><b>${p.name}</b><small>${p.note}</small></div></div>`).join('');
 }
+function renderTestBar(){const b=$('#testBar');if(b)b.hidden=!(S.realOwner&&S.asCustomer)}
+function setAsCustomer(on){S.asCustomer=on;try{on?sessionStorage.setItem('divior-as-customer','1'):sessionStorage.removeItem('divior-as-customer')}catch(e){}S.owner=S.realOwner&&!on;
+  if(on){closeAdmin();window.scrollTo({top:0});toast('Режим покупателя: админ-кнопки и скрытые товары не видны')}else{toast('Вы снова администратор')}renderTestBar();renderAll()}
 function renderAll(){renderHeader();renderPromo();renderCats();renderGrid();setTimeout(hydratePhotos);if(S.photoMode&&document.activeElement&&document.activeElement.id==='pmUrl')return;if(S.promoEdit&&$('#admin').classList.contains('on'))return;if($('#cart').classList.contains('on'))renderCart();if($('#admin').classList.contains('on'))renderAdmin()}
 
 /* ===================== оверлеи ===================== */
@@ -1332,6 +1339,8 @@ document.addEventListener('click',async e=>{
   else if(t.id==='resend'){try{await B.resendVerify();toast('Письмо отправлено')}catch(err){toast(authErr(err))}}
   else if(t.id==='recheck'){await B.reloadUser();openAccount();toast(S.owner?'Готово: админ-панель включена':'Почта ещё не подтверждена')}
   else if(d.tab){S.adminTab=d.tab;S.editing=null;renderAdmin()}
+  else if(t.id==='asCustomerOn'){setAsCustomer(true)}
+  else if(t.id==='asCustomerOff'){setAsCustomer(false);openAdmin()}
   else if(t.id==='kaspiPhotos'){openKaspiPhotos()}
   else if(t.id==='kaspiSpecs'){openKaspiSpecs()}
   else if(t.id==='ksApply'){applyKaspiSpecs(t)}
@@ -1494,6 +1503,7 @@ async function firebaseBackend(cfg){
 
 /* ===================== запуск ===================== */
 var B;
+try{S.asCustomer=sessionStorage.getItem('divior-as-customer')==='1'}catch(e){}
 loadCart();renderInfo();renderAll();
 (async function boot(){
   const configured=FIREBASE_CONFIG.apiKey&&!FIREBASE_CONFIG.apiKey.startsWith('ВСТАВЬТЕ');
@@ -1509,7 +1519,8 @@ loadCart();renderInfo();renderAll();
     subs.forEach(x=>x&&x());subs=[];
     S.user=u;S.ready=true;S.customer=null;S.myOrders=[];
     const wasOwner=S.owner;
-    S.owner=!!(u&&u.email&&u.email.toLowerCase()===ADMIN_EMAIL&&u.emailVerified);
+    S.realOwner=!!(u&&u.email&&u.email.toLowerCase()===ADMIN_EMAIL&&u.emailVerified);
+    S.owner=S.realOwner&&!S.asCustomer;renderTestBar();
     if(wasOwner&&!S.owner){stopAdmin();closeAdmin()}
     if(u){subs.push(B.watchProfile(u.uid,d=>{S.customer=d;renderHeader()}));subs.push(B.watchMyOrders(u.uid,l=>{S.myOrders=l}))}
     renderAll();
