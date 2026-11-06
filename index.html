@@ -103,7 +103,10 @@ section.block{padding:clamp(48px,7vw,88px) 0;border-top:1px solid var(--line)}
 .cats{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px}
 .cat{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:6px;transition:border-color .2s,transform .2s}
 .cat:hover{border-color:var(--cobalt);transform:translateY(-2px)}
-.cat .art{aspect-ratio:5/4;background:var(--media);border-radius:10px;display:flex;align-items:center;justify-content:center;padding:8px}
+.cat .art{aspect-ratio:5/4;background:var(--media);border-radius:10px;display:flex;align-items:center;justify-content:center;padding:8px;overflow:hidden}
+.cat .art.photo{padding:0;background:#1a1814}
+.cat .art.photo img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.cat:hover .art.photo img{transform:scale(1.05)}
 .cat b{font-weight:600}
 .cat span{font-size:13px;color:var(--muted)}
 
@@ -523,6 +526,9 @@ const CATS=[
   {id:'decor',name:'Декор и статуэтки',shape:'vase'},
   {id:'other',name:'Разное',shape:'box'}
 ];
+// Фото категорий: бесплатный фотобанк Unsplash (Unsplash License — можно использовать на коммерческом сайте)
+const CAT_IMG={"sets": "photo-1592304502437-178c9adcf9ca", "plates": "photo-1620818309896-df4306ec95d8", "cups": "photo-1695313129665-3a6028d8b9c8", "bowls": "photo-1525973779373-015bdf68e579", "teapots": "photo-1683558654439-8b9986cbf1dd", "glass": "photo-1769118440711-58b7a58ffe8f", "cutlery": "photo-1760594308629-ea1d7e890804", "serving": "photo-1522413452208-996ff3f3e740", "cookware": "photo-1693038603562-bb6191269ecc", "kitchen": "photo-1777499455310-80354aa1021f", "appliances": "photo-1594213114663-d94db9b17125", "light": "photo-1546379045-bfd4808b24d0", "decor": "photo-1580064141068-f42c18d153f5", "other": "photo-1774451853657-a45138796465"};
+const catImg=id=>CAT_IMG[id]?`https://images.unsplash.com/${CAT_IMG[id]}?w=480&h=384&fit=crop&q=70&auto=format`:'';
 const SHAPES={plate:'Тарелка',bowl:'Миска',cup:'Чашка с блюдцем',mug:'Кружка',teapot:'Чайник',glass:'Бокал',tumbler:'Стакан',pot:'Кастрюля',pan:'Сковорода',set:'Набор',cutlery:'Приборы',dish:'Блюдо',jar:'Банка',lamp:'Люстра',vase:'Ваза',box:'Коробка'};
 const COLORS={'#FFFFFF':'Белый','#1F3FA6':'Синий','#2B2E33':'Графит','#8FA58B':'Шалфей','#D9C6A5':'Песочный','#C8643B':'Терракота','#A9C7E8':'Голубой','#E9DCCB':'Молочный','#C9A45C':'Золотой','#141414':'Чёрный','#D8DCE2':'Серебристый'};
 const LIGHT=['#FFFFFF','#D9C6A5','#A9C7E8','#E9DCCB','#D8DCE2'];
@@ -652,7 +658,7 @@ function renderCats(){
   const cnt={};S.products.forEach(p=>{if(visible(p))cnt[p.cat]=(cnt[p.cat]||0)+1});
   const shown=CATS.filter(c=>cnt[c.id]||S.owner||!S.products.length);
   $('#cats').innerHTML=shown.map(c=>{const n=cnt[c.id]||0;
-    return `<button class="cat" data-cat="${c.id}"><div class="art">${art({shape:c.shape,color:'#FFFFFF',pattern:'rim',deco:'#B8913F'})}</div><b>${c.name}</b><span>${n} ${plural(n,'товар','товара','товаров')}</span></button>`}).join('');
+    return `<button class="cat" data-cat="${c.id}"><div class="art${catImg(c.id)?' photo':''}">${catImg(c.id)?`<img src="${catImg(c.id)}" alt="" loading="lazy">`:art({shape:c.shape,color:'#FFFFFF',pattern:'rim',deco:'#B8913F'})}</div><b>${c.name}</b><span>${n} ${plural(n,'товар','товара','товаров')}</span></button>`}).join('');
   $('#chips').innerHTML=[{id:'all',name:'Все'},...shown].map(c=>`<button class="chip" data-chip="${c.id}" aria-pressed="${S.cat===c.id}">${c.name}</button>`).join('');
 }
 function filtered(){
