@@ -752,7 +752,8 @@ function specsHtml(p,sp){
   const groups=(sp&&sp.s&&sp.s.length)?sp.s.map(norm):(own.length?[['Характеристики',own]]:[]);
   const code=p.kaspiId||p.sku;
   if(!groups.length&&!code)return '<p class="muted" style="margin-top:14px">Характеристики скоро появятся. Если есть вопросы, напишите нам в WhatsApp.</p>';
-  return `<div class="specs">${code?`<h4>Общие характеристики</h4><dl><dt>Код товара</dt><dd>${esc(code)}</dd></dl>`:''}${groups.map(([g,f])=>`<h4>${esc(g)}</h4><dl>${f.map(([k,v])=>`<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}</dl>`).join('')}</div>`}
+  return `<div class="specs">${code?`<h4>Общие характеристики</h4><dl><dt>Код товара</dt><dd>${esc(code)}</dd></dl>`:''}${groups.map(([g,f])=>`<h4>${esc(g)}</h4><dl>${f.map(([k,v])=>`<dt>${esc(k)}</dt><dd>${esc(specVal(v))}</dd>`).join('')}</dl>`).join('')}</div>`}
+const specVal=v=>String(v).replace(/\btrue\b/gi,'Да').replace(/\bfalse\b/gi,'Нет');
 function descHtml(p,sp){const d=p.desc||(sp&&sp.d)||'';return d?`<div class="desc-text">${esc(d)}</div>`:'<p class="muted" style="margin-top:14px">Описание скоро появится.</p>'}
 function openProduct(id,keepTab){const p=prod(id);if(!p)return;const q=S.cart[id]||0;const out=p.stock!=null&&num(p.stock)<=0;const sale=num(p.oldPrice)>num(p.price);
   const gal=(p.kimg||[]).length>1&&!p.photo&&!p.photoUrl&&!p.hasPhoto?p.kimg:null;
