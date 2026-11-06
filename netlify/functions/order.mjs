@@ -2,8 +2,9 @@
 // Покупатель присылает только «какие товары и сколько»; цены, наличие и сумму считает сервер по каталогу,
 // поэтому подделать сумму в браузере нельзя. Здесь же защита от ботов и списание остатков.
 import crypto from 'node:crypto';
+import { fpEnabled, fpInit } from '../lib/freedom.mjs';
 import {
-  esc, catalog, verifyUser, rateLimit, clientIp, fsGet, fsCommit, DOC, toFs,
+  esc, catalog, verifyUser, rateLimit, clientIp, fsGet, fsPatch, fsCommit, DOC, toFs,
   sendAdmins, orderText, orderKeyboard, hasServiceAccount
 } from '../lib/core.mjs';
 
@@ -13,6 +14,7 @@ const SHIP = {
   kz: { name: 'По Казахстану', cost: null }
 };
 const PAY = {
+  online: 'Картой онлайн',
   kaspi: 'Kaspi: счёт на ваш номер',
   qr: 'По QR-коду',
   card: 'Картой при получении',
@@ -42,7 +44,7 @@ export default async (req) => {
     return bad('Слишком много заказов с этого аккаунта. Позвоните нам: +7 775 361-40-90.', 429);
 
   // 4. Проверяем состав по каталогу.
-  const ship = SHIP[b.ship] ? b.ship : null, pay = PAY[b.pay] ? b.pay : null;
+  const ship = SHIP[b.ship] ? b.ship : null, pay = PAY[b.pay] && (b.pay !== 'online' || fpEnabled()) ? b.pay : null;
   if (!ship || !pay) return bad('Выберите способ получения и оплаты.');
   const want = Array.isArray(b.items) ? b.items.slice(0, 60) : [];
   if (!want.length) return bad('Корзина пуста.');
@@ -75,7 +77,7 @@ export default async (req) => {
   const id = crypto.randomBytes(12).toString('base64url').replace(/[-_]/g, 'x');
   const order = {
     num: 'D-' + Date.now().toString(36).toUpperCase().slice(-6),
-    at: Date.now(), status: pay === 'kaspi' ? 'wait' : 'new', uid: user.uid,
+    at: Date.now(), status: pay === 'kaspi' || pay === 'online' ? 'wait' : 'new', uid: user.uid,
     customer: { name: str(pr.name, 80), phone: str(pr.phone, 30), email: user.email },
     items: items.map(({ stock, ...i }) => i),
     sum, shipCost, shipTbd: SHIP[ship].cost == null, total: sum + shipCost,
@@ -98,5 +100,10 @@ export default async (req) => {
   catch (e) { console.error(e); return bad('Не удалось сохранить заказ. Попробуйте ещё раз.', 500); }
 
   await sendAdmins(orderText(order, id) + `\n\n<i>IP: ${esc(ip)}</i>`, { reply_markup: orderKeyboard(id, order.status, order.customer.phone) }).catch(() => { });
-  return Response.json({ ok: true, id, num: order.num, total: order.total, shipTbd: order.shipTbd, payName: order.payName, status: order.status });
+  let payUrl = '', payError = '';
+  if (pay === 'online') {
+    try { const r = await fpInit(order, id); payUrl = r.url; await fsPatch('orders/' + id, { payId: r.paymentId }).catch(() => { }); }
+    catch (e) { console.error(e); payError = 'Заказ сохранён, но страница оплаты не открылась. Оплатите позже в «Моих заказах» или позвоните нам.'; }
+  }
+  return Response.json({ ok: true, id, payUrl, payError, num: order.num, total: order.total, shipTbd: order.shipTbd, payName: order.payName, status: order.status });
 };
