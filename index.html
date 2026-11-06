@@ -52,7 +52,7 @@ h2{font-size:clamp(30px,4.5vw,46px)}
 .btn.small{padding:8px 14px;font-size:14px}
 .btn.danger{background:var(--bad);border-color:var(--bad);color:#fff}
 .btn.block{width:100%}
-.icon-btn{position:relative;display:inline-flex;align-items:center;gap:8px;height:42px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-weight:600;font-size:14px}
+.icon-btn{position:relative;display:inline-flex;white-space:nowrap;align-items:center;gap:8px;height:42px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-weight:600;font-size:14px}
 .icon-btn svg{width:18px;height:18px;flex:none}
 @media (max-width:560px){.top .wrap{gap:10px}.actions{gap:6px}.icon-btn{height:40px;padding:0 10px;gap:6px}.logo{min-width:0;overflow:hidden}}
 .badge{min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:var(--cobalt);color:var(--on-gold);font-size:12px;display:inline-flex;align-items:center;justify-content:center;font-variant-numeric:tabular-nums}
@@ -80,19 +80,6 @@ header.top{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--p
 }
 
 /* hero */
-.hero{padding:clamp(32px,6vw,72px) 0 clamp(36px,6vw,64px)}
-.hero .wrap{display:grid;grid-template-columns:1.05fr 1fr;gap:clamp(24px,5vw,64px);align-items:center}
-.hero h1{font-size:clamp(42px,6.8vw,84px);line-height:1.02;margin:14px 0 18px}
-.hero h1 i{font-style:italic;font-weight:500;background:var(--gold-grad);-webkit-background-clip:text;background-clip:text;color:transparent;padding-right:4px}
-.hero{background:radial-gradient(60% 70% at 78% 45%,rgba(210,174,98,.14),transparent 70%)}
-.hero p.lead{font-size:clamp(17px,1.6vw,19px);color:var(--muted);max-width:44ch}
-.hero .cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
-.perks{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:36px;padding-top:24px;border-top:1px solid var(--line)}
-.perks b{display:block;font-family:var(--display);font-weight:600;font-size:26px;color:var(--cobalt)}
-.perks span{font-size:14px;color:var(--muted)}
-.plate-wrap{position:relative;aspect-ratio:1;max-width:520px;width:100%;justify-self:center}
-#plate{width:100%;height:100%}
-@media (max-width:820px){.hero .wrap{grid-template-columns:1fr}.plate-wrap{max-width:340px;order:-1}.perks{grid-template-columns:1fr 1fr 1fr;gap:10px}.perks b{font-size:18px}}
 
 /* sections */
 section.block{padding:clamp(48px,7vw,88px) 0;border-top:1px solid var(--line)}
@@ -285,6 +272,48 @@ tr:last-child td{border-bottom:0}
 
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--gold-grad);color:var(--on-gold);padding:12px 20px;border-radius:999px;font-weight:600;font-size:14.5px;z-index:100;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;max-width:calc(100% - 32px);text-align:center}
 .toast.on{opacity:1;transform:translateX(-50%)}
+.hero{position:relative;min-height:min(80vh,720px);display:flex;align-items:flex-end;overflow:hidden;border-bottom:1px solid var(--line)}
+.hero-bg{position:absolute;inset:0}
+.hero-bg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.06);transition:opacity 1.4s ease,transform 7s ease}
+.hero-bg img.on{opacity:1;transform:scale(1)}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(15,14,12,.96) 0%,rgba(15,14,12,.82) 38%,rgba(15,14,12,.25) 75%,rgba(15,14,12,.1) 100%),linear-gradient(0deg,rgba(15,14,12,.9) 0%,transparent 40%)}
+.hero .wrap{position:relative;z-index:1;width:100%;padding-top:clamp(56px,10vw,120px);padding-bottom:clamp(32px,5vw,56px)}
+.hero h1{font-size:clamp(44px,7vw,92px);line-height:.98;margin:16px 0 18px;max-width:12ch}
+.hero h1 i{font-family:var(--script);font-style:normal;font-weight:400;font-size:1.12em;background:var(--gold-grad);-webkit-background-clip:text;background-clip:text;color:transparent;padding-right:8px}
+.hero p.lead{font-size:clamp(17px,1.6vw,20px);color:#D7CFC2;max-width:46ch}
+.hero .cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+.hero-foot{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;margin-top:clamp(36px,6vw,64px);padding-top:22px;border-top:1px solid rgba(243,237,226,.14)}
+.perks{display:flex;gap:clamp(20px,4vw,48px);flex-wrap:wrap}
+.perks b{display:block;font-family:var(--display);font-weight:600;font-size:26px;color:var(--cobalt);line-height:1.1}
+.perks span{font-size:14px;color:#BDB4A6}
+.dots{display:flex;gap:8px}
+.dots button{width:28px;height:4px;border-radius:2px;border:0;background:rgba(243,237,226,.3);cursor:pointer;padding:0}
+.dots button.on{background:var(--cobalt)}
+@media (max-width:640px){.hero{min-height:auto}.hero::after{background:linear-gradient(0deg,rgba(15,14,12,.97) 15%,rgba(15,14,12,.7) 60%,rgba(15,14,12,.45))}.hero .wrap{padding-top:140px}}
+/* акции */
+.promo-rail{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(280px,420px);gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:10px;scrollbar-width:thin}
+.promo{position:relative;scroll-snap-align:start;border-radius:var(--r);overflow:hidden;min-height:230px;display:flex;align-items:flex-end;border:1px solid var(--line);background:var(--surface);text-decoration:none;color:var(--ink);cursor:pointer;text-align:left;padding:0;width:100%}
+.promo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .6s}
+.promo:hover img{transform:scale(1.04)}
+.promo::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(15,14,12,.95) 10%,rgba(15,14,12,.35) 70%,rgba(15,14,12,.1))}
+.promo .pc{position:relative;z-index:1;padding:20px;display:grid;gap:6px}
+.promo .pb{justify-self:start;padding:5px 12px;border-radius:999px;background:var(--gold-grad);color:var(--on-gold);font-weight:800;font-size:14px}
+.promo h3{font-size:26px;line-height:1.1}
+.promo p{color:#D7CFC2;font-size:14.5px}
+.promo small{color:var(--muted)}
+.rail{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(220px,250px);gap:16px;overflow-x:auto;padding-bottom:10px;scroll-snap-type:x mandatory;scrollbar-width:thin}
+.rail .card{scroll-snap-align:start}
+.rail-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin:34px 0 14px}
+.rail-head h3{font-size:28px}
+/* характеристики */
+.pd-tabs{display:flex;gap:6px;margin:22px 0 4px;border-bottom:1px solid var(--line)}
+.pd-tabs button{padding:10px 14px;border:0;background:none;color:var(--muted);font-weight:600;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+.pd-tabs button[aria-selected="true"]{color:var(--ink);border-color:var(--cobalt)}
+.specs h4{font-family:var(--display);font-size:20px;font-weight:600;margin:18px 0 8px}
+.specs dl{display:grid;grid-template-columns:minmax(140px,1fr) 1.4fr;gap:0;font-size:14.5px}
+.specs dt,.specs dd{padding:9px 0;border-bottom:1px dashed var(--line)}
+.specs dt{color:var(--muted);padding-right:16px}
+.desc-text{white-space:pre-line;color:#D7CFC2;font-size:15px;line-height:1.6;margin-top:14px}
 .wa-float{position:fixed;right:18px;bottom:18px;z-index:40;width:56px;height:56px;border-radius:50%;background:#25D366;color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 28px -8px rgba(0,0,0,.6);transition:transform .2s}
 .wa-float:hover{transform:scale(1.06)}
 .wa-float svg{width:30px;height:30px}
@@ -300,6 +329,7 @@ body.locked .wa-float{display:none}
   <div class="wrap">
     <a class="logo" href="#top" aria-label="Divior, на главную"><span class="wm">Divior</span><span class="tagline">Хрустальная империя посуды</span></a>
     <nav class="menu" id="menu" aria-label="Главное меню">
+      <a href="#promo">Акции</a>
       <a href="#catalog">Каталог</a>
       <a href="#categories">Категории</a>
       <a href="#delivery">Доставка и оплата</a>
@@ -327,23 +357,36 @@ body.locked .wa-float{display:none}
 </header>
 
 <main id="top">
-  <section class="hero">
+  <section class="hero" aria-label="Главная">
+    <div class="hero-bg" id="heroBg">
+      <img class="on" src="https://images.unsplash.com/photo-1769118440711-58b7a58ffe8f?w=1800&q=70&auto=format&fit=crop" alt="">
+      <img src="https://images.unsplash.com/photo-1546379045-bfd4808b24d0?w=1800&q=70&auto=format&fit=crop" alt="" loading="lazy">
+      <img src="https://images.unsplash.com/photo-1522413452208-996ff3f3e740?w=1800&q=70&auto=format&fit=crop" alt="" loading="lazy">
+    </div>
     <div class="wrap">
-      <div>
-        <span class="eyebrow">Хрустальная империя посуды · Павлодар</span>
-        <h1>Посуда, с которой хочется <i>накрывать стол</i></h1>
-        <p class="lead">Хрусталь, столовые сервизы и приборы, посуда для кухни, светильники и декор. Больше тысячи товаров в бутике в Павлодаре и с доставкой по Казахстану.</p>
-        <div class="cta">
-          <a class="btn" href="#catalog">Перейти в каталог</a>
-          <a class="btn ghost" href="#delivery">Доставка и оплата</a>
-        </div>
+      <span class="eyebrow">Павлодар · ТД «Артур», бутик 1‑204</span>
+      <h1>Хрустальная империя <i>посуды</i></h1>
+      <p class="lead">Хрусталь и фарфор, сервизы и приборы, посуда для кухни, люстры и декор. Больше 1 400 товаров в бутике и с доставкой по Казахстану.</p>
+      <div class="cta">
+        <a class="btn" href="#catalog">Перейти в каталог</a>
+        <a class="btn ghost" href="#promo" id="heroPromo">Акции и скидки</a>
+      </div>
+      <div class="hero-foot">
         <div class="perks">
           <div><b>1 400+</b><span>товаров в каталоге</span></div>
           <div><b>Вт–Вс</b><span>с 10:00 до 19:00</span></div>
-          <div><b>Бутик</b><span>ТД «Артур», 1‑204</span></div>
+          <div><b>Kaspi</b><span>оплата QR и картой</span></div>
         </div>
+        <div class="dots" id="heroDots" role="group" aria-label="Фото"><button class="on" aria-label="Фото 1"></button><button aria-label="Фото 2"></button><button aria-label="Фото 3"></button></div>
       </div>
-      <div class="plate-wrap"><canvas id="plate" aria-label="Фарфоровая тарелка с золотой росписью"></canvas></div>
+    </div>
+  </section>
+
+  <section class="block" id="promo" hidden>
+    <div class="wrap">
+      <div class="sec-head"><div><span class="eyebrow">Лента акций</span><h2>Акции и скидки</h2></div><p class="muted" id="promoNote">Специальные предложения бутика Divior.</p></div>
+      <div class="promo-rail" id="promoRail"></div>
+      <div id="saleBox"></div>
     </div>
   </section>
 
@@ -483,6 +526,7 @@ body.locked .wa-float{display:none}
   <div class="tabs" role="tablist">
     <button class="tab" role="tab" id="t-products" aria-selected="true" data-tab="products">Товары</button>
     <button class="tab" role="tab" id="t-orders" aria-selected="false" data-tab="orders">Заказы</button>
+    <button class="tab" role="tab" id="t-promos" aria-selected="false" data-tab="promos">Акции</button>
     <button class="tab" role="tab" id="t-clients" aria-selected="false" data-tab="clients">Покупатели</button>
   </div>
   <div class="admin-body" id="adminBody"></div>
@@ -610,35 +654,11 @@ function hydratePhotos(){
 async function loadPhoto(img){const id=img.dataset.pid;try{let d=photoCache.get(id);if(!d){d=await B.getPhoto(id);if(d)photoCache.set(id,d)}if(d)document.querySelectorAll(`img.lp[data-pid="${CSS.escape(id)}"]`).forEach(i=>i.src=d)}catch(e){}}
 
 /* ===================== тарелка в шапке ===================== */
-(function plate(){
-  const cv=$('#plate'), ctx=cv.getContext('2d');
-  const still=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let a=0, last=0;
-  function size(){const r=cv.getBoundingClientRect(),d=devicePixelRatio||1;cv.width=r.width*d;cv.height=r.height*d;ctx.setTransform(d,0,0,d,0,0);draw()}
-  function petal(x,y,len,w,ang){ctx.save();ctx.translate(x,y);ctx.rotate(ang);ctx.beginPath();ctx.moveTo(0,0);ctx.bezierCurveTo(w,-len*.3,w*.6,-len*.9,0,-len);ctx.bezierCurveTo(-w*.6,-len*.9,-w,-len*.3,0,0);ctx.fill();ctx.restore()}
-  function flower(x,y,s,rot,col){ctx.fillStyle=col;for(let i=0;i<6;i++)petal(x,y,s,s*.42,rot+i*Math.PI/3);ctx.beginPath();ctx.arc(x,y,s*.2,0,7);ctx.fillStyle='#fff';ctx.fill();ctx.beginPath();ctx.arc(x,y,s*.11,0,7);ctx.fillStyle=col;ctx.fill()}
-  function draw(){
-    const w=cv.clientWidth,h=cv.clientHeight,cx=w/2,cy=h/2,R=Math.min(w,h)*.46;
-    const cob=getComputedStyle(document.documentElement).getPropertyValue('--cobalt').trim()||'#1F3FA6';
-    const col='#B8913F';
-    ctx.clearRect(0,0,w,h);
-    ctx.beginPath();ctx.ellipse(cx,cy+R*.98,R*.8,R*.07,0,0,7);ctx.fillStyle='rgba(0,0,0,.45)';ctx.fill();
-    const gr=ctx.createRadialGradient(cx-R*.3,cy-R*.35,R*.1,cx,cy,R);gr.addColorStop(0,'#FFFDF8');gr.addColorStop(1,'#E8DFCF');
-    ctx.beginPath();ctx.arc(cx,cy,R,0,7);ctx.fillStyle=gr;ctx.fill();
-    ctx.lineWidth=1.5;ctx.strokeStyle='#D8CCB6';ctx.stroke();
-    ctx.save();ctx.translate(cx,cy);ctx.rotate(a);ctx.translate(-cx,-cy);
-    ctx.beginPath();ctx.arc(cx,cy,R*.93,0,7);ctx.lineWidth=R*.035;ctx.strokeStyle=col;ctx.stroke();
-    for(let i=0;i<10;i++){const t=i/10*Math.PI*2,x=cx+Math.cos(t)*R*.8,y=cy+Math.sin(t)*R*.8;flower(x,y,R*.09,t,col);
-      const t2=t+Math.PI/10;ctx.fillStyle=col;petal(cx+Math.cos(t2)*R*.81,cy+Math.sin(t2)*R*.81,R*.07,R*.025,t2+Math.PI/2);petal(cx+Math.cos(t2)*R*.81,cy+Math.sin(t2)*R*.81,R*.07,R*.025,t2-Math.PI/2)}
-    ctx.beginPath();ctx.arc(cx,cy,R*.64,0,7);ctx.lineWidth=1.2;ctx.strokeStyle='#D8CCB6';ctx.stroke();
-    ctx.beginPath();ctx.arc(cx,cy,R*.6,0,7);ctx.lineWidth=R*.012;ctx.strokeStyle=col;ctx.stroke();
-    flower(cx,cy,R*.3,-a*2,col);
-    for(let i=0;i<6;i++){const t=i/6*Math.PI*2+Math.PI/6;ctx.fillStyle=col;petal(cx+Math.cos(t)*R*.34,cy+Math.sin(t)*R*.34,R*.16,R*.05,t+Math.PI/2);ctx.beginPath();ctx.arc(cx+Math.cos(t)*R*.5,cy+Math.sin(t)*R*.5,R*.022,0,7);ctx.fill()}
-    ctx.restore();
-    void cob;
-  }
-  function loop(t){if(last)a+=(t-last)*0.00006;last=t;draw();requestAnimationFrame(loop)}
-  addEventListener('resize',size);size();if(!still)requestAnimationFrame(loop);
+(function hero(){
+  const imgs=[...document.querySelectorAll('#heroBg img')],dots=[...document.querySelectorAll('#heroDots button')];let i=0,t;
+  const show=k=>{i=(k+imgs.length)%imgs.length;imgs.forEach((im,n)=>im.classList.toggle('on',n===i));dots.forEach((d,n)=>d.classList.toggle('on',n===i))};
+  const go=()=>{clearInterval(t);if(!matchMedia('(prefers-reduced-motion: reduce)').matches)t=setInterval(()=>show(i+1),6500)};
+  dots.forEach((d,n)=>d.onclick=()=>{show(n);go()});go();
 })();
 
 /* ===================== корзина (хранится в этом браузере) ===================== */
@@ -669,15 +689,7 @@ function filtered(){
   const by={pop:(a,b)=>(hp(b)-hp(a))||(num(b.sold)-num(a.sold))||(num(b.created)-num(a.created)),cheap:(a,b)=>num(a.price)-num(b.price),exp:(a,b)=>num(b.price)-num(a.price),new:(a,b)=>num(b.created)-num(a.created)};
   return list.sort(by[S.sort]);
 }
-function renderGrid(){
-  const g=$('#grid');
-  $('#catTitle').textContent=S.cat==='all'?'Все товары':catName(S.cat);
-  if(!S.loaded){g.innerHTML=`<div class="empty">${S.failed?esc(S.failed):'Загружаем каталог…'}</div>`;$('#found').textContent='';return}
-  const list=filtered();
-  $('#found').textContent=`${list.length} ${plural(list.length,'товар','товара','товаров')}`;
-  if(!list.length){g.innerHTML=`<div class="empty">${S.products.length?'Ничего не нашлось. Попробуйте другой запрос или раздел.':'В каталоге пока нет товаров.'+(S.owner?' Добавьте первый в админ-панели.':'')}</div>`;return}
-  const more=list.length-S.limit;
-  g.innerHTML=list.slice(0,S.limit).map(p=>{const q=S.cart[p.id]||0;const out=p.stock!=null&&num(p.stock)<=0;
+function cardHtml(p){const q=S.cart[p.id]||0;const out=p.stock!=null&&num(p.stock)<=0;
     const sale=num(p.oldPrice)>num(p.price);
     return `<article class="card">
       <button class="media" data-open="${p.id}" aria-label="Подробнее: ${esc(p.name)}">${pic(p)}
@@ -691,7 +703,16 @@ function renderGrid(){
           ${q?`<span class="stepper"><button data-dec="${p.id}" aria-label="Меньше">−</button><span>${q}</span><button data-inc="${p.id}" aria-label="Больше">+</button></span>`
              :`<button class="btn small" data-add="${p.id}" ${out?'disabled':''}>${out?'Нет':'В корзину'}</button>`}
         </div>
-      </div></article>`}).join('')+(more>0?`<div style="grid-column:1/-1;display:flex;justify-content:center;padding-top:8px"><button class="btn ghost" id="showMore">Показать ещё (${Math.min(more,24)} из ${more})</button></div>`:'');
+      </div></article>`}
+function renderGrid(){
+  const g=$('#grid');
+  $('#catTitle').textContent=S.cat==='all'?'Все товары':catName(S.cat);
+  if(!S.loaded){g.innerHTML=`<div class="empty">${S.failed?esc(S.failed):'Загружаем каталог…'}</div>`;$('#found').textContent='';return}
+  const list=filtered();
+  $('#found').textContent=`${list.length} ${plural(list.length,'товар','товара','товаров')}`;
+  if(!list.length){g.innerHTML=`<div class="empty">${S.products.length?'Ничего не нашлось. Попробуйте другой запрос или раздел.':'В каталоге пока нет товаров.'+(S.owner?' Добавьте первый в админ-панели.':'')}</div>`;return}
+  const more=list.length-S.limit;
+  g.innerHTML=list.slice(0,S.limit).map(cardHtml).join('')+(more>0?`<div style="grid-column:1/-1;display:flex;justify-content:center;padding-top:8px"><button class="btn ghost" id="showMore">Показать ещё (${Math.min(more,24)} из ${more})</button></div>`:'');
 }
 function renderHeader(){
   $('#cartCount').textContent=cartQty();
@@ -702,7 +723,7 @@ function renderInfo(){
   $('#shipList').innerHTML=SHIP.map(s=>`<li><span>${s.name}<br><small class="muted">${s.note}</small></span><b class="price">${s.cost==null?'Уточним по телефону':s.cost?money(s.cost):'Бесплатно'}${s.freeFrom?`<br><small class="muted" style="font-weight:400">бесплатно от ${money(s.freeFrom)}</small>`:''}</b></li>`).join('');
   $('#payList').innerHTML=PAY.map(p=>`<div class="pay"><i>${p.ic}</i><div><b>${p.name}</b><small>${p.note}</small></div></div>`).join('');
 }
-function renderAll(){renderHeader();renderCats();renderGrid();setTimeout(hydratePhotos);if(S.photoMode&&document.activeElement&&document.activeElement.id==='pmUrl')return;if($('#cart').classList.contains('on'))renderCart();if($('#admin').classList.contains('on'))renderAdmin()}
+function renderAll(){renderHeader();renderPromo();renderCats();renderGrid();setTimeout(hydratePhotos);if(S.photoMode&&document.activeElement&&document.activeElement.id==='pmUrl')return;if(S.promoEdit&&$('#admin').classList.contains('on'))return;if($('#cart').classList.contains('on'))renderCart();if($('#admin').classList.contains('on'))renderAdmin()}
 
 /* ===================== оверлеи ===================== */
 let lastFocus=null;
@@ -717,18 +738,48 @@ document.querySelectorAll('[data-close]').forEach(b=>b.onclick=closeAll);
 $('#modal').addEventListener('click',e=>{if(e.target.id==='modal')closeAll()});
 
 /* товар */
-function openProduct(id){const p=prod(id);if(!p)return;const q=S.cart[id]||0;const out=p.stock!=null&&num(p.stock)<=0;const sale=num(p.oldPrice)>num(p.price);
+const specCache=new Map();
+function specsHtml(p,sp){
+  const own=[['Материал',p.material],['Размер',p.size],['Бренд',p.brand]].filter(x=>x[1]);
+  const groups=(sp&&sp.s&&sp.s.length)?sp.s:(own.length?[['Характеристики',own]]:[]);
+  const code=p.kaspiId||p.sku;
+  if(!groups.length&&!code)return '<p class="muted" style="margin-top:14px">Характеристики скоро появятся. Если есть вопросы, напишите нам в WhatsApp.</p>';
+  return `<div class="specs">${code?`<h4>Общие характеристики</h4><dl><dt>Код товара</dt><dd>${esc(code)}</dd></dl>`:''}${groups.map(([g,f])=>`<h4>${esc(g)}</h4><dl>${f.map(([k,v])=>`<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}</dl>`).join('')}</div>`}
+function descHtml(p,sp){const d=p.desc||(sp&&sp.d)||'';return d?`<div class="desc-text">${esc(d)}</div>`:'<p class="muted" style="margin-top:14px">Описание скоро появится.</p>'}
+function openProduct(id,keepTab){const p=prod(id);if(!p)return;const q=S.cart[id]||0;const out=p.stock!=null&&num(p.stock)<=0;const sale=num(p.oldPrice)>num(p.price);
   const gal=(p.kimg||[]).length>1&&!p.photo&&!p.photoUrl&&!p.hasPhoto?p.kimg:null;
+  S.pdTab=keepTab?S.pdTab:'specs';
   openModal(p.name,`<div class="pd"><div><div class="media" id="pdMain">${pic(p)}</div>${gal?`<div class="gal">${gal.map((l,i)=>`<button class="gal-t${i?'':' on'}" data-gal="${esc(l)}" aria-label="Фото ${i+1}"><img src="${kimgUrl(l,'gallery-small')}" alt="" referrerpolicy="no-referrer"></button>`).join('')}</div>`:''}</div><div>
-    <span class="eyebrow">${esc(catName(p.cat))}</span>
-    <div style="font-size:28px;font-weight:700;margin:8px 0" class="price">${money(p.price)} ${sale?`<span class="old" style="font-size:16px;color:var(--muted);text-decoration:line-through;font-weight:500">${money(p.oldPrice)}</span>`:''}</div>
-    <p>${esc(p.desc||'Описание скоро появится.')}</p>
-    <dl>${p.material?`<dt>Материал</dt><dd>${esc(p.material)}</dd>`:''}${p.size?`<dt>Размер</dt><dd>${esc(p.size)}</dd>`:''}
-      <dt>Цвет</dt><dd>${esc(COLORS[p.color]||'—')}${p.pattern&&p.pattern!=='none'?', '+esc(PATTERNS[p.pattern]||''):''}</dd>
-      <dt>Наличие</dt><dd>${out?'Нет в наличии':p.stock!=null?`${num(p.stock)} шт.`:'В наличии'}</dd></dl>
+    <span class="eyebrow">${esc(catName(p.cat))}${p.brand?' · '+esc(p.brand):''}</span>
+    <div style="font-size:30px;font-weight:700;margin:10px 0" class="price">${money(p.price)} ${sale?`<span class="old" style="font-size:16px;color:var(--muted);text-decoration:line-through;font-weight:500">${money(p.oldPrice)}</span> <span class="tag sale" style="position:static;vertical-align:middle">−${Math.round((1-num(p.price)/num(p.oldPrice))*100)}%</span>`:''}</div>
+    <dl style="margin:6px 0 18px"><dt>Наличие</dt><dd>${out?'Нет в наличии':p.stock!=null?`${num(p.stock)} шт. в бутике`:'В наличии'}</dd><dt>Самовывоз</dt><dd>ТД «Артур», бутик 1‑204</dd></dl>
     <button class="btn block" data-add="${p.id}" ${out?'disabled':''}>${q?`В корзине: ${q} · добавить ещё`:'Добавить в корзину'}</button>
     ${p.kaspiId?`<a class="btn ghost block" style="margin-top:10px" href="https://kaspi.kz/shop/p/-${esc(p.kaspiId)}/" target="_blank" rel="noopener">Отзывы и покупка на Kaspi ↗</a>`:''}
-  </div></div>`)}
+  </div></div>
+  <div class="pd-tabs" role="tablist"><button role="tab" id="pt-specs" data-pdtab="specs" aria-selected="${S.pdTab==='specs'}">Характеристики</button><button role="tab" id="pt-desc" data-pdtab="desc" aria-selected="${S.pdTab==='desc'}">Описание</button></div>
+  <div id="pdTabBody"><p class="muted" style="margin-top:14px">Загружаем…</p></div>`);
+  const draw=sp=>{const box=$('#pdTabBody');if(!box||$('#modalTitle').textContent!==p.name)return;box.innerHTML=S.pdTab==='desc'?descHtml(p,sp):specsHtml(p,sp)};
+  if(specCache.has(id))draw(specCache.get(id));
+  else if(window.B&&B.getSpecs)B.getSpecs(id).then(sp=>{specCache.set(id,sp);draw(sp)}).catch(()=>draw(null));else draw(null);
+}
+
+/* акции */
+function promoTarget(pr){if(!pr.link)return '';return pr.link}
+function renderPromo(){
+  const sec=$('#promo');if(!sec)return;
+  const promos=(S.promos||[]).filter(x=>x.active!==false&&(!x.until||new Date(x.until+'T23:59:59')>=new Date()));
+  const sale=S.products.filter(p=>visible(p)&&num(p.oldPrice)>num(p.price)).sort((a,b)=>(1-num(a.price)/num(a.oldPrice))<(1-num(b.price)/num(b.oldPrice))?1:-1).slice(0,24);
+  const show=promos.length||sale.length||S.owner;sec.hidden=!show;$('#heroPromo').hidden=!(promos.length||sale.length);
+  if(!show)return;
+  $('#promoRail').innerHTML=promos.length?promos.map(pr=>`<button class="promo" data-promo="${esc(pr.id)}">${pr.img?`<img src="${esc(pr.img)}" alt="" loading="lazy" referrerpolicy="no-referrer">`:''}<div class="pc">${pr.badge?`<span class="pb">${esc(pr.badge)}</span>`:''}<h3>${esc(pr.title)}</h3>${pr.text?`<p>${esc(pr.text)}</p>`:''}${pr.until?`<small>До ${new Date(pr.until).toLocaleDateString('ru-RU',{day:'numeric',month:'long'})}</small>`:''}</div></button>`).join('')
+    :S.owner?`<div class="empty" style="grid-column:1/-1">Акций пока нет. Добавьте первую: Админ-панель → вкладка «Акции». Товары со старой ценой появятся ниже автоматически.</div>`:'';
+  $('#promoRail').style.display=$('#promoRail').innerHTML?'':'none';
+  $('#saleBox').innerHTML=sale.length?`<div class="rail-head"><h3>Товары со скидкой</h3><span class="muted">${sale.length} ${plural(sale.length,'товар','товара','товаров')}</span></div><div class="rail">${sale.map(cardHtml).join('')}</div>`:'';
+}
+function openPromo(id){const pr=(S.promos||[]).find(x=>x.id===id);if(!pr||!pr.link)return;
+  if(pr.link.startsWith('cat:')){S.cat=pr.link.slice(4);S.q='';$('#q').value='';S.limit=24;renderCats();renderGrid();hydratePhotos();$('#catalog').scrollIntoView()}
+  else if(pr.link.startsWith('q:')){S.cat='all';S.q=pr.link.slice(2);$('#q').value=S.q;S.limit=24;renderCats();renderGrid();hydratePhotos();$('#catalog').scrollIntoView()}
+  else if(/^https?:/.test(pr.link))window.open(pr.link,'_blank','noopener')}
 
 /* корзина */
 function openCart(){lastFocus=document.activeElement;renderCart();setTimeout(hydratePhotos);lock();$('#cart').classList.add('on');$('#cart').setAttribute('aria-hidden','false');setTimeout(()=>$('#cart .x').focus(),50)}
@@ -939,7 +990,7 @@ function renderAdmin(){
       <div class="row" style="margin-bottom:14px;align-items:center;flex-wrap:wrap;gap:10px"><h3 style="font-size:24px">Товары</h3><div style="display:flex;gap:8px;flex-wrap:wrap">
         ${S.products.length?'':'<button class="btn ghost" id="seedProds">Загрузить 14 примеров</button>'}
         <label class="btn ghost" for="kaspiFile" style="cursor:pointer">Импорт из Kaspi (Excel)</label><input type="file" id="kaspiFile" accept=".xlsx" hidden>
-        ${S.products.length?'<button class="btn ghost" id="kaspiPhotos">Фото с Kaspi</button><button class="btn ghost" id="photoMode">Режим фото</button><label class="btn ghost" for="bulkPhotos" style="cursor:pointer">Фото пачкой</label><input type="file" id="bulkPhotos" accept="image/*" multiple hidden>':''}
+        ${S.products.length?'<button class="btn ghost" id="kaspiPhotos">Фото с Kaspi</button><button class="btn ghost" id="kaspiSpecs">Характеристики с Kaspi</button><button class="btn ghost" id="photoMode">Режим фото</button><label class="btn ghost" for="bulkPhotos" style="cursor:pointer">Фото пачкой</label><input type="file" id="bulkPhotos" accept="image/*" multiple hidden>':''}
         <button class="btn" id="newProd">+ Добавить товар</button></div></div>
       <div class="toolbar"><label class="search" for="adminQ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="adminQ" type="search" placeholder="Название, бренд или SKU" value="${esc(S.aq)}" autocomplete="off"></label>
         <select class="sel" id="adminCat" aria-label="Категория"><option value="all">Все категории</option><option value="nophoto" ${S.acat==='nophoto'?'selected':''}>Без фото</option><option value="hidden" ${S.acat==='hidden'?'selected':''}>Скрытые</option>${CATS.map(c=>`<option value="${c.id}" ${S.acat===c.id?'selected':''}>${c.name}</option>`).join('')}</select></div>
@@ -956,6 +1007,8 @@ function renderAdmin(){
         <td class="num"><b>${money(o.total)}</b>${o.shipTbd?'<br><small class="muted">+ доставка</small>':''}</td>
         <td><select class="sel" style="height:36px" id="st-${esc(o.id)}" data-status="${esc(o.id)}" aria-label="Статус заказа ${esc(o.num||o.id)}">${Object.entries(STATUS).map(([k,v])=>`<option value="${k}" ${o.status===k?'selected':''}>${v[0]}</option>`).join('')}</select></td></tr>`).join('')}
       </tbody></table></div>`:`<div class="empty">Заказов пока нет. Когда покупатель оформит заказ, он появится здесь.</div>`}`;
+  } else if(S.adminTab==='promos'){
+    renderPromoAdmin();
   } else {
     const cs=S.customers||[];
     b.innerHTML=`<div class="kpis"><div class="kpi"><b>${cs.length}</b><span>${plural(cs.length,'аккаунт','аккаунта','аккаунтов')} покупателей</span></div></div>
@@ -1036,6 +1089,59 @@ function confirmDelete(id){const p=prod(id);openModal('Удалить товар
 
 
 
+
+
+/* ===================== админка: акции ===================== */
+function promoLinkOpts(v){return `<option value="">Без ссылки</option>${CATS.map(c=>`<option value="cat:${c.id}" ${v==='cat:'+c.id?'selected':''}>Категория: ${c.name}</option>`).join('')}<option value="q" ${v&&v.startsWith('q:')?'selected':''}>Поиск по слову…</option><option value="url" ${v&&/^https?:/.test(v)?'selected':''}>Ссылка на сайт…</option>`}
+function renderPromoAdmin(){
+  const b=$('#adminBody'),list=S.promos||[];
+  if(S.promoEdit){const pr=S.promoEdit,lv=pr.link||'';
+    b.innerHTML=`<div class="row" style="margin-bottom:16px;align-items:center"><h3 style="font-size:24px">${pr.id&&list.some(x=>x.id===pr.id)?'Редактирование акции':'Новая акция'}</h3><button class="btn small ghost" id="prCancel">← К акциям</button></div>
+    <div class="editor"><form class="form" id="prForm" novalidate>
+      <label class="f" for="pr-title">Заголовок<input id="pr-title" name="title" value="${esc(pr.title||'')}" placeholder="Например: Скидки на хрусталь до 30%"></label>
+      <label class="f" for="pr-text">Текст <span class="hint">необязательно</span><textarea id="pr-text" name="text" rows="3" placeholder="Коротко об условиях">${esc(pr.text||'')}</textarea></label>
+      <div class="fgrid"><label class="f" for="pr-badge">Значок <span class="hint">«−30%», «Хит», «Новинка»</span><input id="pr-badge" name="badge" value="${esc(pr.badge||'')}"></label>
+        <label class="f" for="pr-until">Действует до <span class="hint">необязательно</span><input id="pr-until" name="until" type="date" value="${esc(pr.until||'')}"></label></div>
+      <label class="f" for="pr-link">Куда ведёт карточка<select id="pr-link" name="linkType">${promoLinkOpts(lv)}</select></label>
+      <label class="f" for="pr-linkv" id="prLinkVal" ${lv.startsWith('q:')||/^https?:/.test(lv)?'':'hidden'}>Слово для поиска или ссылка<input id="pr-linkv" name="linkVal" value="${esc(lv.startsWith('q:')?lv.slice(2):/^https?:/.test(lv)?lv:'')}"></label>
+      <label class="opt" for="pr-active"><input type="checkbox" id="pr-active" name="active" ${pr.active!==false?'checked':''}><span><b>Показывать на сайте</b></span></label>
+      <div class="err" id="pr-err"></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" type="submit">Сохранить акцию</button><button class="btn ghost" type="button" id="prCancel2">Отмена</button></div>
+    </form>
+    <div style="display:grid;gap:12px;align-content:start"><b>Картинка</b>
+      <div class="promo" style="min-height:220px;cursor:default">${pr.img?`<img src="${esc(pr.img)}" alt="">`:''}<div class="pc">${pr.badge?`<span class="pb">${esc(pr.badge)}</span>`:''}<h3>${esc(pr.title||'Заголовок акции')}</h3></div></div>
+      <label class="f" for="pr-file">Загрузить картинку<input id="pr-file" type="file" accept="image/*" style="padding-top:9px"></label>
+      <label class="f" for="pr-img">Или ссылка на картинку<input id="pr-img" form="prForm" name="img" value="${esc(pr.img&&!pr.img.startsWith('data:')?pr.img:'')}" placeholder="https://…"></label>
+    </div></div>`;
+    return}
+  b.innerHTML=`<div class="row" style="margin-bottom:14px;align-items:center;flex-wrap:wrap;gap:10px"><h3 style="font-size:24px">Лента акций</h3><button class="btn" id="prNew">+ Добавить акцию</button></div>
+    <p class="muted" style="margin-bottom:16px">Акции показываются на главной в разделе «Акции и скидки». Товары, у которых указана старая цена, попадают туда сами.</p>
+    ${list.length?`<div class="promo-rail" style="grid-auto-flow:row;grid-template-columns:repeat(auto-fill,minmax(260px,1fr))">${list.map(pr=>`<div style="display:grid;gap:8px"><div class="promo" style="min-height:180px;cursor:default;${pr.active===false?'opacity:.5':''}">${pr.img?`<img src="${esc(pr.img)}" alt="">`:''}<div class="pc">${pr.badge?`<span class="pb">${esc(pr.badge)}</span>`:''}<h3>${esc(pr.title)}</h3>${pr.until?`<small>до ${esc(pr.until)}</small>`:''}</div></div>
+      <div style="display:flex;gap:6px"><button class="btn small ghost" data-pr-edit="${esc(pr.id)}">Изменить</button><button class="btn small ghost" data-pr-del="${esc(pr.id)}" style="color:var(--bad);border-color:var(--bad)">Удалить</button></div></div>`).join('')}</div>`:`<div class="empty">Акций пока нет.</div>`}`;
+}
+function readPromo(){const f=$('#prForm'),d=Object.fromEntries(new FormData(f));let link='';
+  if(d.linkType==='q')link=d.linkVal.trim()?'q:'+d.linkVal.trim():'';else if(d.linkType==='url')link=/^https?:\/\//.test(d.linkVal.trim())?d.linkVal.trim():'';else link=d.linkType||'';
+  const img=String(d.img||'').trim()||(S.promoEdit.img&&S.promoEdit.img.startsWith('data:')?S.promoEdit.img:'');
+  return {...S.promoEdit,title:d.title.trim(),text:d.text.trim(),badge:d.badge.trim(),until:d.until||'',link,active:f.active.checked,img}}
+async function savePromos(list){await B.savePromos(list);S.promos=list}
+
+/* ===================== характеристики с Kaspi (вставка из буфера) ===================== */
+function openKaspiSpecs(){openModal('Характеристики с Kaspi',`<div class="form">
+  <p class="muted">Вставьте данные, которые Claude скопировал со страниц ваших товаров на Kaspi (Ctrl+V). Характеристики и описания встанут к товарам с таким же артикулом.</p>
+  <label class="f" for="ksText">Данные<textarea id="ksText" rows="6" placeholder="DIVIOR-KASPI-SPECS…" style="font-family:monospace;font-size:12px"></textarea></label>
+  <div class="err" id="ks-err"></div><button class="btn block" id="ksApply">Добавить характеристики</button></div>`,true)}
+async function applyKaspiSpecs(btn){
+  const txt=$('#ksText').value.trim();
+  if(!txt.startsWith('DIVIOR-KASPI-SPECS')){$('#ks-err').textContent='Похоже, вставлено не то. Данные должны начинаться с DIVIOR-KASPI-SPECS.';return}
+  const bySku=new Map(S.products.filter(p=>p.sku).map(p=>[String(p.sku),p]));const out={},upd={};let n=0;
+  txt.split(/\r?\n/).slice(1).forEach(l=>{const t=l.indexOf('\t');if(t<0)return;const sku=l.slice(0,t);const p=bySku.get(sku);if(!p)return;
+    try{const v=JSON.parse(l.slice(t+1));out[p.id]={s:v.s||[],d:v.d||''};if(v.p&&p.kaspiId!==v.p)upd[p.id]={kaspiId:v.p};n++}catch(e){}});
+  if(!n){$('#ks-err').textContent='Не нашлось товаров с такими артикулами.';return}
+  btn.disabled=true;btn.textContent='Сохраняем…';
+  try{await B.setSpecsBatch(out,(i,k)=>{btn.textContent=`Сохраняем… ${Math.round(i/k*100)}%`});if(Object.keys(upd).length)await B.importItems([],upd);specCache.clear();
+    closeAll();document.body.classList.add('locked');toast(`Готово: характеристики у ${n} ${plural(n,'товара','товаров','товаров')}`)}
+  catch(e){btn.disabled=false;btn.textContent='Добавить характеристики';$('#ks-err').textContent=e?.code==='permission-denied'?'Нет прав: обновите правила базы в Firebase (раздел specs).':'Не удалось сохранить: '+(e?.message||'ошибка сети')}
+}
 
 /* ===================== фото из кабинета Kaspi (вставка из буфера) ===================== */
 function openKaspiPhotos(){openModal('Фото с Kaspi',`<div class="form">
@@ -1207,7 +1313,7 @@ async function runImport(btn){
 document.addEventListener('click',async e=>{
   const t=e.target.closest('button,a');if(!t)return;const d=t.dataset;
   if(d.sug!==undefined){pickSug(+d.sug);return}
-  if(d.add){add(d.add);if($('#modal').classList.contains('on')&&$('#modalTitle').textContent===prod(d.add)?.name)openProduct(d.add)}
+  if(d.add){add(d.add);if($('#modal').classList.contains('on')&&$('#modalTitle').textContent===prod(d.add)?.name)openProduct(d.add,true)}
   else if(d.inc){setQty(d.inc,(S.cart[d.inc]||0)+1)}
   else if(d.dec){setQty(d.dec,(S.cart[d.dec]||0)-1)}
   else if(d.rm){setQty(d.rm,0)}
@@ -1226,7 +1332,15 @@ document.addEventListener('click',async e=>{
   else if(t.id==='recheck'){await B.reloadUser();openAccount();toast(S.owner?'Готово: админ-панель включена':'Почта ещё не подтверждена')}
   else if(d.tab){S.adminTab=d.tab;S.editing=null;renderAdmin()}
   else if(t.id==='kaspiPhotos'){openKaspiPhotos()}
+  else if(t.id==='kaspiSpecs'){openKaspiSpecs()}
+  else if(t.id==='ksApply'){applyKaspiSpecs(t)}
+  else if(t.id==='prNew'){S.promoEdit={id:'pr'+Date.now().toString(36),active:true};renderAdmin()}
+  else if(d.prEdit){S.promoEdit={...(S.promos||[]).find(x=>x.id===d.prEdit)};renderAdmin()}
+  else if(d.prDel){if(t.dataset.sure){try{await savePromos((S.promos||[]).filter(x=>x.id!==d.prDel));toast('Акция удалена')}catch(err){toast('Не удалось удалить')}renderAdmin()}else{t.dataset.sure='1';t.textContent='Точно удалить?'}}
+  else if(t.id==='prCancel'||t.id==='prCancel2'){S.promoEdit=null;renderAdmin()}
   else if(t.id==='kpApply'){applyKaspiPhotos(t)}
+  else if(d.pdtab){S.pdTab=d.pdtab;document.querySelectorAll('.pd-tabs button').forEach(b=>b.setAttribute('aria-selected',b===t));const id=$('#modal [data-add]')?.dataset.add;const p=prod(id);const sp=specCache.get(id);$('#pdTabBody').innerHTML=S.pdTab==='desc'?descHtml(p,sp):specsHtml(p,sp)}
+  else if(d.promo){openPromo(d.promo)}
   else if(d.gal){$('#pdMain').innerHTML=`<img src="${kimgUrl(d.gal,'gallery-large')}" alt="" referrerpolicy="no-referrer">`;document.querySelectorAll('.gal-t').forEach(b=>b.classList.toggle('on',b===t))}
   else if(t.id==='photoMode'){S.photoMode=true;renderAdmin()}
   else if(t.id==='pmExit'){S.photoMode=false;renderAdmin()}
@@ -1246,6 +1360,8 @@ document.addEventListener('click',async e=>{
 });
 document.addEventListener('change',async e=>{
   const t=e.target;
+  if(t.id==='pr-link'){$('#prLinkVal').hidden=!(t.value==='q'||t.value==='url')}
+  if(t.id==='pr-file'&&t.files[0]){try{const img=await resizeImage(t.files[0],1000);S.promoEdit={...readPromo(),img};renderAdmin()}catch(err){toast('Не получилось открыть картинку')}t.value=''}
   if(t.id==='adminCat'){S.acat=t.value;S.apage=0;renderAdminTable()}
   if(t.id==='kaspiFile'&&t.files[0]){startImport(t.files[0]);t.value=''}
   if((t.id==='pmCam'||t.id==='pmFile')&&t.files[0]){pmPhoto(t.files[0]);t.value=''}
@@ -1262,7 +1378,11 @@ document.addEventListener('keydown',e=>{if(e.target.id!=='co-street')return;cons
   else if(e.key==='Enter'&&sugIdx>=0){e.preventDefault();pickSug(sugIdx)}else if(e.key==='Escape'){e.stopPropagation();box.hidden=true}});
 document.addEventListener('mousedown',e=>{if(e.target.closest('.sug'))e.preventDefault()});
 document.addEventListener('focusout',e=>{if(e.target.id==='co-street')setTimeout(()=>{const b=$('#addrSug');if(b&&!b.contains(document.activeElement))b.hidden=true},150)});
-document.addEventListener('submit',e=>{
+document.addEventListener('submit',async e=>{
+  if(e.target.id==='prForm'){e.preventDefault();const pr=readPromo();if(!pr.title){$('#pr-err').textContent='Введите заголовок акции.';return}
+    const list=(S.promos||[]).filter(x=>x.id!==pr.id);const i=(S.promos||[]).findIndex(x=>x.id===pr.id);if(i>=0)list.splice(i,0,pr);else list.unshift(pr);
+    try{await savePromos(list);S.promoEdit=null;toast('Акция сохранена');renderAdmin()}catch(err){$('#pr-err').textContent=err?.code==='permission-denied'?'Нет прав: обновите правила базы в Firebase (раздел site).':'Не удалось сохранить. Если картинка большая, попробуйте другую.'}
+    return}
   const id=e.target.id;if(['signupForm','signinForm','resetForm','profileForm','checkoutForm'].includes(id))e.preventDefault();
   if(id==='signupForm')doSignup(e.target);
   if(id==='signinForm')doSignin(e.target);
@@ -1316,7 +1436,11 @@ function demoBackend(){
     watchMyOrders:(uid,f)=>watch('orders',()=>f(list('orders').filter(o=>o.uid===uid))),
     watchAllOrders:f=>watch('orders',()=>f(list('orders'))),
     async setOrderStatus(i,s){st.orders[i]={...st.orders[i],status:s};emit('orders')},
-    watchUsers:f=>watch('users',()=>f(list('users')))
+    watchUsers:f=>watch('users',()=>f(list('users'))),
+    async getSpecs(i){return (st.specs||{})[i]||null},
+    async setSpecsBatch(map,prog){st.specs=st.specs||{};Object.assign(st.specs,map);save();prog&&prog(1,1)},
+    watchPromos:f=>watch('products',()=>f(st.promos||[])),
+    async savePromos(list){st.promos=list;emit('products')}
   };
 }
 async function firebaseBackend(cfg){
@@ -1359,7 +1483,11 @@ async function firebaseBackend(cfg){
     watchMyOrders:(uid,f)=>F.onSnapshot(F.query(F.collection(db,'orders'),F.where('uid','==',uid)),s=>f(rows(s)),()=>f([])),
     watchAllOrders:f=>F.onSnapshot(F.collection(db,'orders'),s=>f(rows(s)),()=>f([])),
     setOrderStatus:(i,s)=>F.updateDoc(F.doc(db,'orders',i),{status:s}),
-    watchUsers:f=>F.onSnapshot(F.collection(db,'users'),s=>f(rows(s)),()=>f([]))
+    watchUsers:f=>F.onSnapshot(F.collection(db,'users'),s=>f(rows(s)),()=>f([])),
+    async getSpecs(i){const d=await F.getDoc(F.doc(db,'specs',i));return d.exists()?d.data():null},
+    async setSpecsBatch(map,prog){const ids=Object.keys(map);for(let k=0;k<ids.length;k+=400){const b=F.writeBatch(db);ids.slice(k,k+400).forEach(i=>b.set(F.doc(db,'specs',i),map[i]));await b.commit();prog&&prog(Math.min(k+400,ids.length),ids.length)}},
+    watchPromos:f=>F.onSnapshot(F.doc(db,'site','promos'),d=>f(d.exists()?(d.data().items||[]):[]),()=>f([])),
+    savePromos:list=>F.setDoc(F.doc(db,'site','promos'),{items:list})
   };
 }
 
@@ -1372,6 +1500,7 @@ loadCart();renderInfo();renderAll();
   catch(e){S.failed='Не удалось подключиться к магазину. Проверьте интернет и обновите страницу.';renderGrid();return}
   if(B.demo){const bn=$('#banner');bn.innerHTML=`Демо-режим: данные хранятся только в этом браузере. Чтобы открыть админ-панель, зарегистрируйтесь с почтой <b>${esc(ADMIN_EMAIL)}</b>.`}
   const timer=setTimeout(()=>{if(!S.loaded){S.failed='Каталог пока не загрузился. Проверьте интернет: товары появятся, как только связь восстановится.';renderGrid()}},10000);
+  B.watchPromos(l=>{S.promos=l;renderPromo();if($('#admin').classList.contains('on')&&S.adminTab==='promos'&&!S.promoEdit)renderAdmin()});
   B.watchProducts(list=>{clearTimeout(timer);S.products=list;S.loaded=true;S.failed=false;renderAll()},
     ()=>{clearTimeout(timer);S.failed='Не удалось загрузить каталог. Обновите страницу позже.';renderGrid()});
   let subs=[];
