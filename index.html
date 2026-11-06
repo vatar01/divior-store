@@ -318,6 +318,19 @@ tr:last-child td{border-bottom:0}
 @media (max-width:560px){.test-bar{left:12px;right:12px;bottom:84px;justify-content:space-between}.test-bar span{white-space:normal;font-size:13px}}
 .wa-float{position:fixed;right:18px;bottom:18px;z-index:40;width:56px;height:56px;border-radius:50%;background:#25D366;color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 28px -8px rgba(0,0,0,.6);transition:transform .2s}
 .wa-float:hover{transform:scale(1.06)}
+.help-float{background:var(--gold-grad);color:var(--on-gold);border:0;cursor:pointer}
+.help-float svg{width:28px;height:28px}
+.help-panel{position:fixed;right:18px;bottom:86px;z-index:46;width:min(380px,calc(100% - 24px));max-height:calc(100% - 110px);overflow-y:auto;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 24px 50px -20px rgba(0,0,0,.8);display:grid;gap:12px}
+.help-panel[hidden]{display:none}
+.hp-head{display:flex;justify-content:space-between;align-items:center}
+.hp-head b{font-family:var(--display);font-size:22px}
+.hp-links{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.hp-l{display:grid;gap:2px;padding:10px;border:1px solid var(--line);border-radius:12px;text-decoration:none;text-align:center;font-size:14px}
+.hp-l small{color:var(--muted);font-size:11.5px}
+.hp-l.wa{border-color:#25D366}
+.hp-l:hover{border-color:var(--cobalt)}
+@media (max-width:560px){.help-panel{right:12px;bottom:80px}}
+.tab .badge{margin-left:4px;height:18px;min-width:18px;font-size:11px}
 .wa-float svg{width:30px;height:30px}
 body.locked .wa-float{display:none}
 .banner{background:var(--cobalt-soft);color:var(--cobalt);font-size:13.5px;letter-spacing:.02em;text-align:center;padding:8px 16px}
@@ -530,12 +543,30 @@ body.locked .wa-float{display:none}
     <button class="tab" role="tab" id="t-products" aria-selected="true" data-tab="products">Товары</button>
     <button class="tab" role="tab" id="t-orders" aria-selected="false" data-tab="orders">Заказы</button>
     <button class="tab" role="tab" id="t-promos" aria-selected="false" data-tab="promos">Акции</button>
+    <button class="tab" role="tab" id="t-support" aria-selected="false" data-tab="support">Обращения <span class="badge" id="supBadge" hidden>0</span></button>
     <button class="tab" role="tab" id="t-clients" aria-selected="false" data-tab="clients">Покупатели</button>
   </div>
   <div class="admin-body" id="adminBody"></div>
 </div>
 
-<a class="wa-float" href="https://wa.me/77753614090" target="_blank" rel="noopener" aria-label="Написать в WhatsApp"><svg viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" d="M16 3C9 3 3.3 8.6 3.3 15.6c0 2.4.7 4.7 1.9 6.7L3 29l6.9-2.2c1.9 1 4 1.6 6.1 1.6 7 0 12.7-5.6 12.7-12.6S23 3 16 3zm0 23.1c-1.9 0-3.8-.5-5.4-1.5l-.4-.2-4.1 1.3 1.3-4-.3-.4c-1.1-1.7-1.7-3.6-1.7-5.6C5.4 9.8 10.2 5.1 16 5.1s10.6 4.7 10.6 10.5S21.8 26.1 16 26.1zm5.8-7.8c-.3-.2-1.9-.9-2.2-1-.3-.1-.5-.2-.7.2-.2.3-.8 1-1 1.2-.2.2-.4.2-.7.1-.3-.2-1.3-.5-2.5-1.6-.9-.8-1.6-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.5-.6c.2-.2.2-.3.3-.6.1-.2 0-.4 0-.6l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.1-1.2 2.8s1.2 3.2 1.4 3.5c.2.2 2.4 3.7 5.8 5.1 2.9 1.1 3.4.9 4 .8.6-.1 1.9-.8 2.2-1.5.3-.8.3-1.4.2-1.5-.1-.2-.3-.3-.6-.4z"/></svg></a>
+<button class="wa-float help-float" id="helpBtn" aria-label="Помощь и поддержка" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5v.4"/><circle cx="12" cy="16.6" r=".6" fill="currentColor"/></svg></button>
+<div class="help-panel" id="helpPanel" hidden role="dialog" aria-label="Поддержка">
+  <div class="hp-head"><b>Поддержка Divior</b><button class="x" id="helpClose" aria-label="Закрыть">×</button></div>
+  <p class="muted" style="font-size:14px">Ответим на вопросы о товарах, наличии и доставке. Вт–Вс 10:00–19:00.</p>
+  <div class="hp-links">
+    <a class="hp-l wa" href="https://wa.me/77753614090" target="_blank" rel="noopener"><b>WhatsApp</b><small>быстрее всего</small></a>
+    <a class="hp-l" href="https://t.me/+77753614090" target="_blank" rel="noopener"><b>Telegram</b><small>написать</small></a>
+    <a class="hp-l" href="tel:+77753614090"><b>Позвонить</b><small>с 10 до 19</small></a>
+  </div>
+  <form class="form" id="helpForm" novalidate style="gap:10px">
+    <b style="font-size:14px">Или оставьте вопрос, мы перезвоним</b>
+    <div class="fgrid" style="gap:10px"><label class="f" for="hf-name">Имя<input id="hf-name" name="name" autocomplete="name"></label><label class="f" for="hf-phone">Телефон<input id="hf-phone" name="phone" type="tel" autocomplete="tel" placeholder="+7"></label></div>
+    <label class="f" for="hf-text">Вопрос<textarea id="hf-text" name="text" rows="3" placeholder="Например: есть ли этот сервиз на 12 персон?"></textarea></label>
+    <input type="text" name="website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
+    <div class="err" id="hf-err"></div>
+    <button class="btn block" type="submit">Отправить вопрос</button>
+  </form>
+</div>
 <div class="test-bar" id="testBar" hidden><span>👁 Вы смотрите сайт как покупатель</span><button class="btn small" id="asCustomerOff">Вернуться в админку</button></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
@@ -727,6 +758,22 @@ function renderInfo(){
   $('#shipList').innerHTML=SHIP.map(s=>`<li><span>${s.name}<br><small class="muted">${s.note}</small></span><b class="price">${s.cost==null?'Уточним по телефону':s.cost?money(s.cost):'Бесплатно'}${s.freeFrom?`<br><small class="muted" style="font-weight:400">бесплатно от ${money(s.freeFrom)}</small>`:''}</b></li>`).join('');
   $('#payList').innerHTML=PAY.map(p=>`<div class="pay"><i>${p.ic}</i><div><b>${p.name}</b><small>${p.note}</small></div></div>`).join('');
 }
+async function notify(data){try{if(window.B&&B.demo)return;const idToken=data.type==='order'&&B.idToken?await B.idToken():null;
+  const r=await fetch('/.netlify/functions/notify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...data,idToken})});return r.ok?await r.json().catch(()=>null):null}catch(e){return null}}
+function alertNew(msg){toast('🔔 '+msg);try{const c=new (window.AudioContext||window.webkitAudioContext)(),o=c.createOscillator(),g=c.createGain();o.frequency.value=880;g.gain.setValueAtTime(.15,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.5);o.connect(g).connect(c.destination);o.start();o.stop(c.currentTime+.5)}catch(e){}
+  if(document.hidden){S.unseen=(S.unseen||0)+1;document.title=`(${S.unseen}) ${S.baseTitle}`}}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&S.unseen){S.unseen=0;document.title=S.baseTitle}});
+function renderTabBadges(){const b=$('#supBadge');if(!b)return;const n=(S.messages||[]).filter(m=>m.status!=='done').length;b.hidden=!n;b.textContent=n}
+function toggleHelp(on){const p=$('#helpPanel');p.hidden=!on;$('#helpBtn').setAttribute('aria-expanded',on);if(on){const pr=S.customer?.profile;if(pr){if(!$('#hf-name').value)$('#hf-name').value=pr.name||'';if(!$('#hf-phone').value)$('#hf-phone').value=pr.phone||''}}}
+async function sendHelp(f){const d=Object.fromEntries(new FormData(f));const text=String(d.text||'').trim();
+  if(d.website)return;if(text.length<3){$('#hf-err').textContent='Напишите вопрос.';return}
+  if(String(d.phone||'').replace(/\D/g,'').length<10&&!S.user){$('#hf-err').textContent='Оставьте телефон, чтобы мы могли ответить.';return}
+  const last=+(sessionStorage.getItem('divior-help-at')||0);if(Date.now()-last<60000){$('#hf-err').textContent='Вопрос уже отправлен. Подождите минуту перед следующим.';return}
+  const btn=f.querySelector('[type=submit]');btn.disabled=true;
+  const msg={name:String(d.name||'').trim().slice(0,80),phone:String(d.phone||'').trim().slice(0,40),text:text.slice(0,1500),at:Date.now(),status:'new',email:S.user?.email||'',uid:S.user?.uid||''};
+  try{await B.addMessage(msg);notify({type:'support',name:msg.name,phone:msg.phone,text:msg.text});try{sessionStorage.setItem('divior-help-at',String(Date.now()))}catch(e){}
+    f.innerHTML='<div class="note">Спасибо! Вопрос отправлен, мы свяжемся с вами в рабочее время. Если срочно, напишите в WhatsApp.</div>'}
+  catch(e){btn.disabled=false;$('#hf-err').textContent='Не удалось отправить. Напишите нам в WhatsApp.'}}
 function renderTestBar(){const b=$('#testBar');if(b)b.hidden=!(S.realOwner&&S.asCustomer)}
 function setAsCustomer(on){S.asCustomer=on;try{on?sessionStorage.setItem('divior-as-customer','1'):sessionStorage.removeItem('divior-as-customer')}catch(e){}S.owner=S.realOwner&&!on;
   if(on){closeAdmin();window.scrollTo({top:0});toast('Режим покупателя: админ-кнопки и скрытые товары не видны')}else{toast('Вы снова администратор')}renderTestBar();renderAll()}
@@ -739,7 +786,7 @@ function closeAll(){$('#cart').classList.remove('on');$('#cart').setAttribute('a
   $('#scrim').classList.remove('on');if(!$('#admin').classList.contains('on'))document.body.classList.remove('locked');lastFocus?.focus?.()}
 function openModal(title,html,narrow){lastFocus=document.activeElement;$('#modalTitle').textContent=title;$('#modalBody').innerHTML=html;$('#modalBox').classList.toggle('narrow',!!narrow);
   $('#cart').classList.remove('on');lock();$('#modal').classList.add('on');$('#modal').setAttribute('aria-hidden','false');$('#modalBox').scrollTop=0;setTimeout(hydratePhotos);setTimeout(()=>$('#modalBox .x').focus(),50)}
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){if($('#modal').classList.contains('on')||$('#cart').classList.contains('on'))closeAll();else if($('#admin').classList.contains('on'))closeAdmin()}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#helpPanel').hidden){toggleHelp(false);return}if(e.key==='Escape'){if($('#modal').classList.contains('on')||$('#cart').classList.contains('on'))closeAll();else if($('#admin').classList.contains('on'))closeAdmin()}});
 $('#scrim').onclick=closeAll;
 document.querySelectorAll('[data-close]').forEach(b=>b.onclick=closeAll);
 $('#modal').addEventListener('click',e=>{if(e.target.id==='modal')closeAll()});
@@ -973,7 +1020,7 @@ async function placeOrder(f){
     items:cartLines().map(({p,q})=>({pid:p.id,name:p.name,price:num(p.price),q})),
     sum,shipCost:c,shipTbd:shipTbd(ship),total:sum+c,ship,shipName:SHIP.find(s=>s.id===ship).name,pay,payName:PAY.find(p=>p.id===pay).name,
     address:ship==='pickup'?'':addrText(addr),region:ship==='pickup'?'':(addr.city==='__other'?'':regionOf(addr.city)),comment:f.comment.value.trim()};
-  try{await B.addOrder(order);if(ship!=='pickup'){B.saveAddress(S.user.uid,addr).catch(()=>{});S.customer={...S.customer,addr}}S.cart={};saveCart();renderAll();
+  try{const oid=await B.addOrder(order);notify({type:'order',orderId:oid});if(ship!=='pickup'){B.saveAddress(S.user.uid,addr).catch(()=>{});S.customer={...S.customer,addr}}S.cart={};saveCart();renderAll();
     openModal('Заказ принят',`<div class="success"><span class="eyebrow">Спасибо!</span><div class="num">№ ${order.num}</div>
       <p>Сумма к оплате: <b class="price">${money(order.total)}</b>${order.shipTbd?' + доставка (стоимость назовём по телефону)':''}. Способ оплаты: ${esc(order.payName)}.</p>
       <p class="muted" style="margin:10px 0 20px">Мы свяжемся с вами для подтверждения. Статус заказа виден в аккаунте.</p>
@@ -984,7 +1031,7 @@ async function placeOrder(f){
 /* ===================== админ-панель ===================== */
 let adminSubs=[];
 function openAdmin(){if(!S.owner)return;closeAll();document.body.classList.add('locked');$('#admin').classList.add('on');
-  if(!adminSubs.length){adminSubs=[B.watchAllOrders(l=>{S.allOrders=l;if(!S.editing)renderAdmin()}),B.watchUsers(l=>{S.customers=l;if(!S.editing)renderAdmin()})]}
+  if(!adminSubs.length){adminSubs=[B.watchAllOrders(l=>{const prev=S.seenOrders;S.seenOrders=new Set(l.map(o=>o.id));if(prev){const fresh=l.filter(o=>!prev.has(o.id));if(fresh.length)alertNew(`Новый заказ ${fresh[0].num||''} на ${money(fresh[0].total)}`)}S.allOrders=l;if(!S.editing)renderAdmin()}),B.watchMessages(l=>{const prev=S.seenMsgs;S.seenMsgs=new Set(l.map(m=>m.id));if(prev&&l.some(m=>!prev.has(m.id)))alertNew('Новый вопрос в поддержку');S.messages=l;renderTabBadges();if(S.adminTab==='support'&&!S.editing)renderAdmin()}),B.watchUsers(l=>{S.customers=l;if(!S.editing)renderAdmin()})]}
   renderAdmin()}
 function closeAdmin(){$('#admin').classList.remove('on');document.body.classList.remove('locked');S.editing=null}
 function stopAdmin(){adminSubs.forEach(u=>u&&u());adminSubs=[];S.allOrders=[];S.customers=[]}
@@ -1016,6 +1063,12 @@ function renderAdmin(){
         <td class="num"><b>${money(o.total)}</b>${o.shipTbd?'<br><small class="muted">+ доставка</small>':''}</td>
         <td><select class="sel" style="height:36px" id="st-${esc(o.id)}" data-status="${esc(o.id)}" aria-label="Статус заказа ${esc(o.num||o.id)}">${Object.entries(STATUS).map(([k,v])=>`<option value="${k}" ${o.status===k?'selected':''}>${v[0]}</option>`).join('')}</select></td></tr>`).join('')}
       </tbody></table></div>`:`<div class="empty">Заказов пока нет. Когда покупатель оформит заказ, он появится здесь.</div>`}`;
+  } else if(S.adminTab==='support'){
+    const ms=(S.messages||[]).slice().sort((a,b)=>b.at-a.at);
+    b.innerHTML=`<div class="row" style="margin-bottom:14px;align-items:center;flex-wrap:wrap;gap:10px"><h3 style="font-size:24px">Обращения в поддержку</h3><button class="btn small ghost" id="tgTest">Проверить уведомления Telegram</button></div>
+      ${ms.length?ms.map(m=>`<div class="order" style="${m.status==='done'?'opacity:.55':''}"><div class="row"><b>${esc(m.name||'Без имени')}${m.phone?` · <a href="tel:${esc(m.phone.replace(/[^\d+]/g,''))}">${esc(m.phone)}</a>`:''}</b><span class="muted" style="font-size:13px">${new Date(m.at).toLocaleString('ru-RU',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</span></div>
+        <div style="white-space:pre-line">${esc(m.text)}</div>${m.email?`<small class="muted">${esc(m.email)}</small>`:''}
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">${m.phone?`<a class="btn small" href="https://wa.me/${esc(m.phone.replace(/\D/g,''))}" target="_blank" rel="noopener">Ответить в WhatsApp</a>`:''}<button class="btn small ghost" data-msg-done="${esc(m.id)}">${m.status==='done'?'Вернуть в работу':'Готово'}</button><button class="btn small ghost" data-msg-del="${esc(m.id)}" style="color:var(--bad);border-color:var(--bad)">Удалить</button></div></div>`).join(''):`<div class="empty">Обращений пока нет. Когда покупатель задаст вопрос через кнопку «Помощь», он появится здесь и придёт вам в Telegram.</div>`}`;
   } else if(S.adminTab==='promos'){
     renderPromoAdmin();
   } else {
@@ -1340,6 +1393,11 @@ document.addEventListener('click',async e=>{
   else if(t.id==='resend'){try{await B.resendVerify();toast('Письмо отправлено')}catch(err){toast(authErr(err))}}
   else if(t.id==='recheck'){await B.reloadUser();openAccount();toast(S.owner?'Готово: админ-панель включена':'Почта ещё не подтверждена')}
   else if(d.tab){S.adminTab=d.tab;S.editing=null;renderAdmin()}
+  else if(t.id==='helpBtn'){toggleHelp($('#helpPanel').hidden)}
+  else if(t.id==='helpClose'){toggleHelp(false)}
+  else if(t.id==='tgTest'){t.disabled=true;const r=await notify({type:'test'});t.disabled=false;toast(r&&r.ok?'Отправили тестовое сообщение в Telegram':r&&r.reason==='not-configured'?'Telegram ещё не настроен в Netlify (см. инструкцию)':'Не получилось: функция уведомлений недоступна')}
+  else if(d.msgDone){const m=(S.messages||[]).find(x=>x.id===d.msgDone);try{await B.updateMessage(d.msgDone,{status:m&&m.status==='done'?'new':'done'})}catch(err){toast('Не удалось')}}
+  else if(d.msgDel){if(t.dataset.sure){try{await B.deleteMessage(d.msgDel)}catch(err){toast('Не удалось удалить')}}else{t.dataset.sure='1';t.textContent='Точно?'}}
   else if(t.id==='asCustomerOn'){setAsCustomer(true)}
   else if(t.id==='asCustomerOff'){setAsCustomer(false);openAdmin()}
   else if(t.id==='kaspiPhotos'){openKaspiPhotos()}
@@ -1390,6 +1448,7 @@ document.addEventListener('keydown',e=>{if(e.target.id!=='co-street')return;cons
 document.addEventListener('mousedown',e=>{if(e.target.closest('.sug'))e.preventDefault()});
 document.addEventListener('focusout',e=>{if(e.target.id==='co-street')setTimeout(()=>{const b=$('#addrSug');if(b&&!b.contains(document.activeElement))b.hidden=true},150)});
 document.addEventListener('submit',async e=>{
+  if(e.target.id==='helpForm'){e.preventDefault();sendHelp(e.target);return}
   if(e.target.id==='prForm'){e.preventDefault();const pr=readPromo();if(!pr.title){$('#pr-err').textContent='Введите заголовок акции.';return}
     const list=(S.promos||[]).filter(x=>x.id!==pr.id);const i=(S.promos||[]).findIndex(x=>x.id===pr.id);if(i>=0)list.splice(i,0,pr);else list.unshift(pr);
     try{await savePromos(list);S.promoEdit=null;toast('Акция сохранена');renderAdmin()}catch(err){$('#pr-err').textContent=err?.code==='permission-denied'?'Нет прав: обновите правила базы в Firebase (раздел site).':'Не удалось сохранить. Если картинка большая, попробуйте другую.'}
@@ -1443,7 +1502,12 @@ function demoBackend(){
     watchProfile:(uid,f)=>watch('users',()=>f(st.users[uid]||null)),
     async saveProfile(uid,profile){st.users[uid]={...(st.users[uid]||{}),profile,updated:Date.now()};emit('users')},
     async saveAddress(uid,addr){st.users[uid]={...(st.users[uid]||{}),addr};emit('users')},
-    async addOrder(o){st.orders['o'+id()]=o;emit('orders')},
+    async addOrder(o){const i='o'+id();st.orders[i]=o;emit('orders');return i},
+    idToken:async()=>null,
+    async addMessage(m){st.messages=st.messages||{};st.messages['m'+id()]=m;emit('users')},
+    watchMessages:f=>watch('users',()=>f(Object.entries(st.messages||{}).map(([i,v])=>({id:i,...v})))),
+    async updateMessage(i,p){st.messages[i]={...st.messages[i],...p};emit('users')},
+    async deleteMessage(i){delete st.messages[i];emit('users')},
     watchMyOrders:(uid,f)=>watch('orders',()=>f(list('orders').filter(o=>o.uid===uid))),
     watchAllOrders:f=>watch('orders',()=>f(list('orders'))),
     async setOrderStatus(i,s){st.orders[i]={...st.orders[i],status:s};emit('orders')},
@@ -1490,7 +1554,12 @@ async function firebaseBackend(cfg){
     watchProfile:(uid,f)=>F.onSnapshot(F.doc(db,'users',uid),s=>f(s.exists()?s.data():null),()=>f(null)),
     saveProfile:(uid,profile)=>F.setDoc(F.doc(db,'users',uid),{profile,updated:Date.now()},{merge:true}),
     saveAddress:(uid,addr)=>F.setDoc(F.doc(db,'users',uid),{addr},{merge:true}),
-    addOrder:o=>F.addDoc(F.collection(db,'orders'),o),
+    addOrder:async o=>(await F.addDoc(F.collection(db,'orders'),o)).id,
+    idToken:()=>auth.currentUser?auth.currentUser.getIdToken():Promise.resolve(null),
+    addMessage:m=>F.addDoc(F.collection(db,'messages'),m),
+    watchMessages:f=>F.onSnapshot(F.collection(db,'messages'),s=>f(rows(s)),()=>f([])),
+    updateMessage:(i,p)=>F.updateDoc(F.doc(db,'messages',i),p),
+    deleteMessage:i=>F.deleteDoc(F.doc(db,'messages',i)),
     watchMyOrders:(uid,f)=>F.onSnapshot(F.query(F.collection(db,'orders'),F.where('uid','==',uid)),s=>f(rows(s)),()=>f([])),
     watchAllOrders:f=>F.onSnapshot(F.collection(db,'orders'),s=>f(rows(s)),()=>f([])),
     setOrderStatus:(i,s)=>F.updateDoc(F.doc(db,'orders',i),{status:s}),
@@ -1504,6 +1573,7 @@ async function firebaseBackend(cfg){
 
 /* ===================== запуск ===================== */
 var B;
+S.baseTitle=document.title;
 try{S.asCustomer=sessionStorage.getItem('divior-as-customer')==='1'}catch(e){}
 loadCart();renderInfo();renderAll();
 (async function boot(){

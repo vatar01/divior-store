@@ -27,6 +27,14 @@ service cloud.firestore {
       allow read: if true;
       allow write: if isAdmin();
     }
+    // Вопросы в поддержку: оставить может любой посетитель, читает и обрабатывает только администратор.
+    match /messages/{id} {
+      allow create: if request.resource.data.text is string
+        && request.resource.data.text.size() > 2
+        && request.resource.data.text.size() <= 1500
+        && request.resource.data.keys().hasOnly(['name','phone','text','at','status','email','uid']);
+      allow read, update, delete: if isAdmin();
+    }
     match /products/{id} {
       allow read: if true;
       allow write: if isAdmin();
